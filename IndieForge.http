@@ -1,0 +1,6 @@
+@IndieForge_HostAddress = http://localhost:5259
+
+GET {{IndieForge_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
