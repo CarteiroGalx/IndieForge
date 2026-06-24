@@ -1,6 +1,14 @@
 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using IndieForge.Context;
+using IndieForge.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace IndieForge
 {
@@ -15,7 +23,53 @@ namespace IndieForge
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<AppDbContext>(options => 
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Exemplo", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Formato de Token: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                    new string[] {}
+                }
+                });
+            });
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source=app.db"));
             var app = builder.Build();
 
@@ -27,8 +81,77 @@ namespace IndieForge
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapPost("/api/login", async (AppDbContext _context, string nome, string senha) =>
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == nome);
+                if (user is null)
+                {
+                    throw new InvalidOperationException("Nome de usuário ou senha inválidos");
+                }
+
+                var hasher = new PasswordHasher<User>();
+                var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, senha);
+                if (verification == PasswordVerificationResult.Failed)
+                {
+                    throw new InvalidOperationException("Nome de usuário ou senha inválidos");
+                }
+
+                var claims = new[]
+                {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Nome),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+                var key = builder.Configuration["Jwt:Key"];
+                var issuer = builder.Configuration["Jwt:Issuer"];
+                var audience = builder.Configuration["Jwt:Audience"];
+                if (string.IsNullOrEmpty(key)) throw new InvalidOperationException("JWT key not configured");
+
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                var tokenDescriptor = new JwtSecurityToken(
+                    issuer: issuer,
+                    audience: audience,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: credentials
+                );
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var tokenString = tokenHandler.WriteToken(tokenDescriptor);
+
+                return tokenString;
+
+            });
+
+            app.MapPost("/api/register", async (AppDbContext _context, string nome, string email, string senha) =>
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == nome);
+                if (existingUser != null)
+                {
+                    throw new InvalidOperationException("Nome de usuário já existe");
+                }
+
+                var hasher = new PasswordHasher<User>();
+                var user = new User
+                {
+                    Nome = nome,
+                    Email = email,
+                    SenhaHash = hasher.HashPassword(null, senha),
+                    Role = UserRole.User
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return "Usuário registrado com sucesso";
+            });
             app.Run();
         }
     }
