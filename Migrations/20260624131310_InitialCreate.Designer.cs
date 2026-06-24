@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IndieForge.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260623035526_Initial")]
-    partial class Initial
+    [Migration("20260624131310_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,9 +32,6 @@ namespace IndieForge.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("ProjetoId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
@@ -43,7 +40,9 @@ namespace IndieForge.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjetoId");
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Contribuicoes");
                 });
@@ -71,12 +70,9 @@ namespace IndieForge.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdCriador");
 
                     b.ToTable("Projects");
                 });
@@ -301,16 +297,32 @@ namespace IndieForge.Migrations
 
             modelBuilder.Entity("IndieForge.Models.Contribuicao", b =>
                 {
-                    b.HasOne("IndieForge.Models.Projeto", null)
+                    b.HasOne("IndieForge.Models.Projeto", "Projeto")
                         .WithMany("Contribuicoes")
-                        .HasForeignKey("ProjetoId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IndieForge.Models.User", "User")
+                        .WithMany("Contribuicoes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projeto");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("IndieForge.Models.Projeto", b =>
                 {
-                    b.HasOne("IndieForge.Models.User", null)
-                        .WithMany("Projecos")
-                        .HasForeignKey("UserId");
+                    b.HasOne("IndieForge.Models.User", "Criador")
+                        .WithMany("Projetos")
+                        .HasForeignKey("IdCriador")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Criador");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -371,7 +383,9 @@ namespace IndieForge.Migrations
 
             modelBuilder.Entity("IndieForge.Models.User", b =>
                 {
-                    b.Navigation("Projecos");
+                    b.Navigation("Contribuicoes");
+
+                    b.Navigation("Projetos");
                 });
 #pragma warning restore 612, 618
         }

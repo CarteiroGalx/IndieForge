@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IndieForge.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -180,17 +180,17 @@ namespace IndieForge.Migrations
                     Nome = table.Column<string>(type: "TEXT", nullable: false),
                     Descricao = table.Column<string>(type: "TEXT", nullable: false),
                     MetaFinanceira = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    Status = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Projects_Users_IdCriador",
+                        column: x => x.IdCriador,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,17 +201,23 @@ namespace IndieForge.Migrations
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Valor = table.Column<decimal>(type: "TEXT", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ProjetoId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    DataCriacao = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contribuicoes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contribuicoes_Projects_ProjetoId",
-                        column: x => x.ProjetoId,
+                        name: "FK_Contribuicoes_Projects_ProjectId",
+                        column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Contribuicoes_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -252,14 +258,19 @@ namespace IndieForge.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contribuicoes_ProjetoId",
+                name: "IX_Contribuicoes_ProjectId",
                 table: "Contribuicoes",
-                column: "ProjetoId");
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_UserId",
-                table: "Projects",
+                name: "IX_Contribuicoes_UserId",
+                table: "Contribuicoes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_IdCriador",
+                table: "Projects",
+                column: "IdCriador");
         }
 
         /// <inheritdoc />

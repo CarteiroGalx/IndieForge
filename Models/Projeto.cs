@@ -11,6 +11,7 @@
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid IdCriador { get; set; }
+        public User Criador { get; set; } = null!;
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public decimal MetaFinanceira { get; set; }
