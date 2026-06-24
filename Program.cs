@@ -101,11 +101,11 @@ namespace IndieForge
 
                 var claims = new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Nome),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
-            };
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Nome),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                };
 
                 var key = builder.Configuration["Jwt:Key"];
                 var issuer = builder.Configuration["Jwt:Issuer"];
@@ -152,6 +152,42 @@ namespace IndieForge
 
                 return "Usuário registrado com sucesso";
             });
+            
+            app.MapGet("/api/users", async (AppDbContext _context) =>
+            {
+                var users = await _context.Users.ToListAsync();
+                return users;
+            });
+
+            app.MapGet("/api/projects", async (AppDbContext _context) =>
+            {
+                var projects = await _context.Projects.ToListAsync();
+                return projects;
+            });
+
+            app.MapGet("/api/contributions", async (AppDbContext _context) =>
+            {
+                var contributions = await _context.Contribuicoes.ToListAsync();
+                return contributions;
+            });
+
+            app.MapPost("/api/projects", async (AppDbContext _context, Guid idCriador, string nome, string descricao, decimal metaFinanceira) =>
+            {
+                var project = new Projeto
+                {
+                    IdCriador = idCriador,
+                    Nome = nome,
+                    Descricao = descricao,
+                    MetaFinanceira = metaFinanceira,
+                    Status = Status.Ativo
+                };
+
+                _context.Projects.Add(project);
+                await _context.SaveChangesAsync();
+
+                return project;
+            });
+            
             app.Run();
         }
     }
