@@ -3,8 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using IndieForge.Context;
+using IndieForge.DTOs;
 using IndieForge.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -77,16 +79,16 @@ namespace IndieForge
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapPost("/api/login", async (AppDbContext _context, string nome, string senha) =>
+            app.MapPost("/api/login", async (AppDbContext _context, LoginDto loginDto) =>
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == nome);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
                 if (user is null)
                 {
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
                 }
 
                 var hasher = new PasswordHasher<User>();
-                var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, senha);
+                var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, loginDto.Password);
                 if (verification == PasswordVerificationResult.Failed)
                 {
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
@@ -123,9 +125,9 @@ namespace IndieForge
 
             });
 
-            app.MapPost("/api/register", async (AppDbContext _context, string nome, string email, string senha) =>
+            app.MapPost("/api/register", async (AppDbContext _context, RegisterDto registerDto) =>
             {
-                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == nome);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == registerDto.UserName);
                 if (existingUser != null)
                 {
                     throw new InvalidOperationException("Nome de usuário já existe");
@@ -134,10 +136,10 @@ namespace IndieForge
                 var hasher = new PasswordHasher<User>();
                 var user = new User
                 {
-                    Nome = nome,
-                    Email = email,
-                    SenhaHash = hasher.HashPassword(null, senha),
-                    Role = UserRole.User
+                    Nome = registerDto.UserName,
+                    Email = registerDto.Email,
+                    SenhaHash = hasher.HashPassword(null, registerDto.Password),
+                    Role = registerDto.Role
                 };
 
                 _context.Users.Add(user);
@@ -145,7 +147,7 @@ namespace IndieForge
 
                 return "Usuário registrado com sucesso";
             });
-            
+
             app.MapGet("/api/users", async (AppDbContext _context) =>
             {
                 var users = await _context.Users.ToListAsync();
