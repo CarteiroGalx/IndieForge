@@ -37,6 +37,8 @@ namespace IndieForge.Models
         [DisplayFormat(DataFormatString = "{0:C}")]
         [Display(Name = "Meta Financeira")]
         public decimal MetaFinanceira { get; set; }
+        [Display(Name = "Total Arrecadado")]
+        public decimal TotalArrecadado { get; set; } = 0;
 
         [Display(Name = "Contribuições")]
         public List<Contribuicao> Contribuicoes { get; set; } = [];
