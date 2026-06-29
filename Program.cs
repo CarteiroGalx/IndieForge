@@ -32,6 +32,8 @@ namespace IndieForge
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
                         ClockSkew = TimeSpan.Zero
                     };
@@ -42,25 +44,26 @@ namespace IndieForge
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Exemplo", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "Formato de Token: 'Bearer 12345abcdef'",
+                    Description = "Insira o token JWT no formato: Bearer {token}",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
                             }
                         },
-                    new string[] {}
-                }
+                        Array.Empty<string>()
+                    }
                 });
             });
 
@@ -78,6 +81,8 @@ namespace IndieForge
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapGet("/api/ping", () => "Pong!");
 
             app.MapPost("/api/login", async (AppDbContext _context, LoginDto loginDto) =>
             {
