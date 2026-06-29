@@ -187,7 +187,37 @@ namespace IndieForge
 
                 return project;
             });
-            
+
+            app.MapPost("/api/teste", async (AppDbContext _context, ClaimsPrincipal user, CreateContributionDto request) =>
+            {
+                var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!Guid.TryParse(userIdFromToken, out var userId))
+                    return Results.Unauthorized();
+
+                var userEntity = await _context.Users.FindAsync(userId);
+
+                if (userEntity is null)
+                    return Results.NotFound("Usuário não encontrado");
+
+                var project = await _context.Projects.FindAsync(request.ProjetoId);
+
+                if (project is null)
+                    return Results.NotFound(new { message = "Projeto não encontrado"});
+
+                var contribution = new Contribuicao(
+                    userId,
+                    request.ProjetoId,
+                    request.Valor
+                );
+                _context.Contribuicoes.Add(contribution);
+                project.TotalArrecadado += request.Valor;
+
+                await _context.SaveChangesAsync();
+
+                return Results.Ok("Deu certo!");
+            });
+
             app.Run();
         }
     }

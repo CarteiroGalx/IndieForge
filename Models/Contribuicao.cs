@@ -30,5 +30,12 @@ namespace IndieForge.Models
         [Display(Name = "Data de Criação")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+
+        public Contribuicao(Guid userId, Guid projectId, decimal valor)
+        {
+            UserId = userId;
+            ProjectId = projectId;
+            Valor = valor;
+        }
     }
 }
