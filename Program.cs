@@ -97,7 +97,7 @@ namespace IndieForge
 
             app.MapGet("/api/ping", () => "Pong!");
 
-            app.MapPost("/api/login", async (AppDbContext _context, LoginDto loginDto) =>
+            auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto) =>
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
                 if (user is null)
@@ -143,7 +143,7 @@ namespace IndieForge
 
             });
 
-            app.MapPost("/api/register", async (AppDbContext _context, RegisterDto registerDto) =>
+            auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto) =>
             {
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == registerDto.UserName);
                 if (existingUser != null)
@@ -166,13 +166,12 @@ namespace IndieForge
                 return "Usuário registrado com sucesso";
             });
 
-            app.MapGet("/api/users", async (AppDbContext _context) =>
+            admin.MapGet("/projects", async(AppDbContext _context) =>
             {
-                var users = await _context.Users.ToListAsync();
-                return users;
+                return await _context.Projects.ToListAsync();
             });
 
-            app.MapGet("/api/projects", async (AppDbContext _context) =>
+            projects.MapGet("/", async (AppDbContext _context) =>
             {
                 var projects = await _context.Projects
                         .Select(p => new ProjectResponseDto(
@@ -188,13 +187,13 @@ namespace IndieForge
                 return projects;
             });
 
-            app.MapGet("/api/contributions", async (AppDbContext _context) =>
+            admin.MapGet("/contributions", async (AppDbContext _context) =>
             {
                 var contributions = await _context.Contribuicoes.ToListAsync();
                 return contributions;
             });
 
-            app.MapPost("/api/projects", async (AppDbContext _context, Guid idCriador, string nome, string descricao, decimal metaFinanceira) =>
+            projects.MapPost("/", async (AppDbContext _context, Guid idCriador, string nome, string descricao, decimal metaFinanceira) =>
             {
                 var project = new Projeto
                 {
@@ -211,7 +210,7 @@ namespace IndieForge
                 return project;
             });
 
-            app.MapGet("/api/project/{id}", async (AppDbContext _context, string id) =>
+            projects.MapGet("/{id}", async (AppDbContext _context, string id) =>
             {
                 if (!Guid.TryParse(id, out var projectId))
                     return Results.BadRequest("Id inválido.");
