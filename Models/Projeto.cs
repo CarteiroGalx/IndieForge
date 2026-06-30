@@ -16,7 +16,7 @@ namespace IndieForge.Models
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required(ErrorMessage = "O ID do criador é obrigatório")]
-        [ForeignKey("Criador")]
+        [ForeignKey(nameof(Criador))]
         public Guid IdCriador { get; set; }
 
         [Required(ErrorMessage = "O criador do projeto é obrigatório")]
@@ -24,27 +24,21 @@ namespace IndieForge.Models
 
         [Required(ErrorMessage = "O nome do projeto é obrigatório")]
         [StringLength(200, MinimumLength = 3, ErrorMessage = "O nome deve ter entre 3 e 200 caracteres")]
-        [Display(Name = "Nome do Projeto")]
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A descrição do projeto é obrigatória")]
         [StringLength(2000, MinimumLength = 10, ErrorMessage = "A descrição deve ter entre 10 e 2000 caracteres")]
-        [Display(Name = "Descrição")]
         public string Descricao { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A meta financeira é obrigatória")]
         [Range(0.01, 100_000_000, ErrorMessage = "A meta deve ser maior que zero")]
         [DisplayFormat(DataFormatString = "{0:C}")]
-        [Display(Name = "Meta Financeira")]
         public decimal MetaFinanceira { get; set; }
-        [Display(Name = "Total Arrecadado")]
-        public decimal TotalArrecadado { get; set; } = 0;
-
-        [Display(Name = "Contribuições")]
         public List<Contribuicao> Contribuicoes { get; set; } = [];
-
+        public int TotalContribuicoes => Contribuicoes.Count;
+        public decimal TotalArrecadado => Contribuicoes.Sum(c => c.Valor);
+        public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
         [Required(ErrorMessage = "O status é obrigatório")]
-        [Display(Name = "Status")]
         public Status Status { get; set; } = Status.Ativo;
     }
 }
