@@ -82,6 +82,12 @@ namespace IndieForge
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // AGRUPAMENTO POR ROTAS
+            var admin = app.MapGroup("/api/admin");
+            var projects = app.MapGroup("/api/projects");
+            var auth = app.MapGroup("/api/auth");
+            //-------
+
             app.MapGet("/api/ping", () => "Pong!");
 
             app.MapPost("/api/login", async (AppDbContext _context, LoginDto loginDto) =>
