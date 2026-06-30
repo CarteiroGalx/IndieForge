@@ -161,7 +161,17 @@ namespace IndieForge
 
             app.MapGet("/api/projects", async (AppDbContext _context) =>
             {
-                var projects = await _context.Projects.ToListAsync();
+                var projects = await _context.Projects
+                        .Select(p => new ProjectResponseDto(
+                            p.Nome,
+                            p.Descricao,
+                            p.MetaFinanceira,
+                            p.TotalContribuicoes,
+                            p.TotalArrecadado,
+                            p.Status,
+                            p.DataCriacao
+                        ))
+                        .ToListAsync();
                 return projects;
             });
 
@@ -186,6 +196,26 @@ namespace IndieForge
                 await _context.SaveChangesAsync();
 
                 return project;
+            });
+
+            app.MapGet("/api/project/{id}", async (AppDbContext _context, string id) =>
+            {
+                if (!Guid.TryParse(id, out var projectId))
+                    return Results.BadRequest("Id inválido.");
+
+                var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+
+                var response = new ProjectResponseDto(
+                    project.Nome,
+                    project.Descricao,
+                    project.MetaFinanceira,
+                    project.TotalContribuicoes,
+                    project.TotalArrecadado,
+                    project.Status,
+                    project.DataCriacao
+                );
+
+                return Results.Ok(response);
             });
 
             app.MapPost("/api/teste", async (AppDbContext _context, ClaimsPrincipal user, CreateContributionDto request) =>
