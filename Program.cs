@@ -156,9 +156,10 @@ namespace IndieForge
                 {
                     Nome = registerDto.UserName,
                     Email = registerDto.Email,
-                    SenhaHash = hasher.HashPassword(null, registerDto.Password),
                     Role = registerDto.Role
                 };
+
+                user.SenhaHash = hasher.HashPassword(user, registerDto.Password);
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
@@ -217,6 +218,9 @@ namespace IndieForge
 
                 var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
 
+                if(project is null) return Results.NotFound("Projeto não encontrado");
+                if(project.Status == Status.Oculto) return Results.Unauthorized();
+
                 var response = new ProjectResponseDto(
                     project.Nome,
                     project.Descricao,
@@ -253,7 +257,6 @@ namespace IndieForge
                     request.Valor
                 );
                 _context.Contribuicoes.Add(contribution);
-                project.TotalArrecadado += request.Valor;
 
                 await _context.SaveChangesAsync();
 
