@@ -22,6 +22,13 @@ namespace IndieForge
 
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddAuthorization(options =>
+                {
+                    options.AddPolicy("AdminOnly", policy =>
+                    {
+                        policy.RequireRole("Admin");
+                    });
+                });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -83,7 +90,7 @@ namespace IndieForge
             app.UseAuthorization();
 
             // AGRUPAMENTO POR ROTAS
-            var admin = app.MapGroup("/api/admin");
+            var admin = app.MapGroup("/api/admin").RequireAuthorization("AdminOnly");
             var projects = app.MapGroup("/api/projects");
             var auth = app.MapGroup("/api/auth");
             //-------
