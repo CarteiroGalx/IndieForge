@@ -164,13 +164,6 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 </details>
 
-## API
-
-Após executar o projeto, acesse:
-`http://localhost:5259/swagger/index.html`
-
-Toda a documentação e métodos da API vão estar através do Swagger.
-
 ## Como testar o projeto
 
 - Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o **.NET 8** instalado em sua máquina.
