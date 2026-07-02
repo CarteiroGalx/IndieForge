@@ -115,7 +115,7 @@ namespace IndieForge
                 if (verification == PasswordVerificationResult.Failed)
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
 
-                return authService.Login(user); ;
+                return await authService.Login(user);
 
             });
 
