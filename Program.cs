@@ -76,6 +76,13 @@ namespace IndieForge
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite("Data Source=app.db"));
+
+            builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<AdminService>();
+            builder.Services.AddScoped<ContributionService>();
+            builder.Services.AddScoped<ProjectService>();
+            builder.Services.AddScoped<AccountService>();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
