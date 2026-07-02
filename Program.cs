@@ -102,6 +102,20 @@ namespace IndieForge
 
             app.MapGet("/api/ping", () => "Pong!");
 
+            app.MapGet("/api/check-auth", (ClaimsPrincipal user) => 
+            {
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userName = user.FindFirst(ClaimTypes.Name)?.Value;
+                var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
+                return new
+                {
+                    UserId = userId,
+                    UserName = userName,
+                    UserRole = userRole
+                };
+            }).RequireAuthorization();
+
             auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto, AuthService authService) =>
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
