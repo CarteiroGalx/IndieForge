@@ -1,28 +1,73 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using IndieForge.Context;
+using IndieForge.DTOs;
+using IndieForge.Models;
+using Microsoft.AspNetCore.Identity;
+
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace IndieForge.Services
 {
     public class AuthService
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(AppDbContext context)
+        public AuthService(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
-        public async Task Registrar()
+        public async Task Registrar(RegisterDto register)
         {
-            
+            var hasher = new PasswordHasher<User>();
+            var user = new User
+            {
+                Nome = register.UserName,
+                Email = register.Email
+            };
+
+            user.SenhaHash = hasher.HashPassword(user, register.Password);
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task Login()
+        public async Task<string> Login(User user)
         {
-            
+            var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Nome),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                };
+
+            var key = _configuration["Jwt:Key"];
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            if (string.IsNullOrEmpty(key)) throw new InvalidOperationException("JWT key not configured");
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: credentials
+            );
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenString = tokenHandler.WriteToken(tokenDescriptor);
+
+            return tokenString;
         }
 
         public async Task StatusCheck()
