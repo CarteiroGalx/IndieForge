@@ -1,16 +1,14 @@
-
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using IndieForge.Context;
 using IndieForge.DTOs;
 using IndieForge.Models;
+using IndieForge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
+using System.Text;
 
 namespace IndieForge
 {
@@ -107,17 +105,15 @@ namespace IndieForge
             auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto, AuthService authService) =>
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
+
                 if (user is null)
-                {
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
-                }
 
                 var hasher = new PasswordHasher<User>();
                 var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, loginDto.Password);
+
                 if (verification == PasswordVerificationResult.Failed)
-                {
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
-                }
 
                 return authService.Login(user); ;
 
@@ -140,7 +136,7 @@ namespace IndieForge
                 return "Usuário registrado com sucesso";
             });
 
-            admin.MapGet("/projects", async(AppDbContext _context) =>
+            admin.MapGet("/projects", async (AppDbContext _context) =>
             {
                 return await _context.Projects.ToListAsync();
             });
@@ -191,8 +187,8 @@ namespace IndieForge
 
                 var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
 
-                if(project is null) return Results.NotFound("Projeto não encontrado");
-                if(project.Status == Status.Oculto) return Results.Unauthorized();
+                if (project is null) return Results.NotFound("Projeto não encontrado");
+                if (project.Status == Status.Oculto) return Results.Unauthorized();
 
                 var response = new ProjectResponseDto(
                     project.Nome,
