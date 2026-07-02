@@ -78,12 +78,16 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟨 Criar projeto
 - 🟥 Editar projeto
 - 🟥 Cancelar projeto
+- 🚀 Comentários
+- 🚀 Avaliação de 0 a 5
+- 🚀 Botão de Denúncia (fraudes, roubo, plágio e etc)
 
 ### Contribuições
 
 - 🟨 Contribuir para um projeto
 - 🟥 Histórico de contribuições
-- 🟥 Lista de apoiadores
+- 🟥 Ranking de apoiadores por projeto
+- 🚀 Recompensas por valor de contribuição
 
 ### Administração
 
