@@ -158,14 +158,17 @@ namespace IndieForge
             projects.MapGet("/", async (AppDbContext _context) =>
             {
                 var projects = await _context.Projects
-                        .Select(p => new ProjectDetailsDto(
+                        .Where(p => p.Status != Status.Oculto)
+                        .Include(c => c.Criador)
+                        .Include(p => p.Contribuicoes)
+                        .Select(p => new ProjectCardDto(
                             p.Nome,
                             p.Descricao,
                             p.MetaFinanceira,
-                            p.TotalContribuicoes,
-                            p.TotalArrecadado,
+                            (decimal)(p.Contribuicoes.Sum(c => (double?)c.Valor) ?? 0d),
                             p.Status,
-                            p.DataCriacao
+                            p.DataCriacao,
+                            p.Criador.Nome
                         ))
                         .ToListAsync();
                 return projects;
