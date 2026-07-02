@@ -228,34 +228,26 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            app.MapPost("/api/teste", async (AppDbContext _context, ClaimsPrincipal user, CreateContributionDto request) =>
+            projects.MapPost("/contribution", async (AppDbContext _context, CreateContributionDto dto, ClaimsPrincipal user) =>
             {
                 var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
                 if (!Guid.TryParse(userIdFromToken, out var userId))
-                    return Results.Unauthorized();
+                    return Results.BadRequest();
 
-                var userEntity = await _context.Users.FindAsync(userId);
+                var projeto = await _context.Projects.FindAsync(dto.ProjetoId);
+                if (projeto is null) return Results.NotFound("Projeto não encontrado");
 
-                if (userEntity is null)
-                    return Results.NotFound("Usuário não encontrado");
+                var cont = new Contribuicao(
+                        userId,
+                        projeto.Id,
+                        dto.Valor
+                    );
 
-                var project = await _context.Projects.FindAsync(request.ProjetoId);
-
-                if (project is null)
-                    return Results.NotFound(new { message = "Projeto não encontrado"});
-
-                var contribution = new Contribuicao(
-                    userId,
-                    request.ProjetoId,
-                    request.Valor
-                );
-                _context.Contribuicoes.Add(contribution);
-
+                _context.Contribuicoes.Add(cont);
                 await _context.SaveChangesAsync();
 
-                return Results.Ok("Deu certo!");
-            });
+                return Results.Ok();
+            }).RequireAuthorization();
 
             app.Run();
         }
