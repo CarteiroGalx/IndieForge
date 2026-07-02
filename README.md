@@ -37,7 +37,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 ### 🛡️ Administrador
 
 - Visualizar estatísticas gerais da plataforma.
-- Bloquear usuários.
+- Bloquear/banir usuários.
 - Ocultar projetos da plataforma.
 - Consultar o histórico de projetos e contribuições para fins de auditoria.
 
@@ -89,15 +89,10 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 - 🟥 Auditoria universal de contribuições
 - 🟥 Média de transações por minuto (valor e quantos por vez)
-- 🚀 Revogar tokens de acesso
-- 🚀 Refresh tokens
 - 🟥 Ocultar projeto
 - 🟥 Bloquear usuário
-
-### Documentação
-
-- 🟥 README
-- 🟥 Documentação dos endpoints
+- 🚀 Revogar tokens de acesso
+- 🚀 Refresh tokens
 
 </details>
 
@@ -168,7 +163,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 - Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o **.NET 8** instalado em sua máquina.
 - Depois, navegue é a pasta raiz do projeto
-- Digite `dotnet run` e aguarde a aplicação inicializar.
+- Digite `dotnet run` no terminal que aponta para a raiz do projeto e aguarde a aplicação inicializar.
 - Após isso, poderá navegar até `http://localhost:5259/swagger/index.html` e testar a API através do Swagger.
 
 ### Registros Seeds
