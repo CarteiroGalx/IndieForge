@@ -104,7 +104,7 @@ namespace IndieForge
 
             app.MapGet("/api/ping", () => "Pong!");
 
-            auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto) =>
+            auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto, AuthService authService) =>
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
                 if (user is null)
@@ -119,57 +119,23 @@ namespace IndieForge
                     throw new InvalidOperationException("Nome de usuário ou senha inválidos");
                 }
 
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Nome),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
-                };
-
-                var key = builder.Configuration["Jwt:Key"];
-                var issuer = builder.Configuration["Jwt:Issuer"];
-                var audience = builder.Configuration["Jwt:Audience"];
-                if (string.IsNullOrEmpty(key)) throw new InvalidOperationException("JWT key not configured");
-
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                var tokenDescriptor = new JwtSecurityToken(
-                    issuer: issuer,
-                    audience: audience,
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(1),
-                    signingCredentials: credentials
-                );
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenString = tokenHandler.WriteToken(tokenDescriptor);
-
-                return tokenString;
+                return authService.Login(user); ;
 
             });
 
-            auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto) =>
+            auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto, AuthService authService) =>
             {
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == registerDto.UserName);
+
                 if (existingUser != null)
-                {
                     throw new InvalidOperationException("Nome de usuário já existe");
-                }
 
-                var hasher = new PasswordHasher<User>();
-                var user = new User
-                {
-                    Nome = registerDto.UserName,
-                    Email = registerDto.Email,
-                    Role = registerDto.Role
-                };
+                var existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerDto.Email);
 
-                user.SenhaHash = hasher.HashPassword(user, registerDto.Password);
+                if (existingEmail != null)
+                    throw new InvalidOperationException("Email ja cadastrado");
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
+                await authService.Registrar(registerDto);
 
                 return "Usuário registrado com sucesso";
             });
