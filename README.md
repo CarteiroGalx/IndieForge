@@ -45,10 +45,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 > ### Legendas
 >
-> 🟩 - Concluído |
-> 🟨 - Em andamento |
-> 🟥 - Não concluído |
-> 🚀 - Em breve
+> 🟩 - Concluído | 🟨 - Em andamento | 🟥 - Não concluído | 🚀 - Em breve
 
 ### Back-end
 
