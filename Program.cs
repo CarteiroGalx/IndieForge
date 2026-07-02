@@ -144,7 +144,7 @@ namespace IndieForge
             projects.MapGet("/", async (AppDbContext _context) =>
             {
                 var projects = await _context.Projects
-                        .Select(p => new ProjectResponseDto(
+                        .Select(p => new ProjectDetailsDto(
                             p.Nome,
                             p.Descricao,
                             p.MetaFinanceira,
@@ -180,25 +180,33 @@ namespace IndieForge
                 return project;
             });
 
-            projects.MapGet("/{id}", async (AppDbContext _context, string id) =>
+            projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>
             {
-                if (!Guid.TryParse(id, out var projectId))
-                    return Results.BadRequest("Id inválido.");
+                var response = await _context.Projects
+                    .Where(p => p.Id == id && p.Status != Status.Oculto)
+                    .Include(p => p.Contribuicoes)
+                        .ThenInclude(c => c.User)
+                    .Select(p => new ProjectDetailsDto(
+                        p.Nome,
+                        p.Descricao,
+                        p.MetaFinanceira,
+                        p.Contribuicoes.Count(),
+                        (decimal)(p.Contribuicoes.Sum(c => (double?)c.Valor) ?? 0d),
+                        p.Status,
+                        p.DataCriacao,
+                        p.Contribuicoes
+                            .OrderByDescending(c => c.DataCriacao)
+                            .Select(c => new ContributionResponseDto(
+                                c.Valor,
+                                c.DataCriacao,
+                                c.User.Nome
+                            ))
+                            .ToList()
+                    ))
+                    .FirstOrDefaultAsync();
 
-                var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
-
-                if (project is null) return Results.NotFound("Projeto não encontrado");
-                if (project.Status == Status.Oculto) return Results.Unauthorized();
-
-                var response = new ProjectResponseDto(
-                    project.Nome,
-                    project.Descricao,
-                    project.MetaFinanceira,
-                    project.TotalContribuicoes,
-                    project.TotalArrecadado,
-                    project.Status,
-                    project.DataCriacao
-                );
+                if (response is null)
+                    return Results.NotFound("Projeto não encontrado");
 
                 return Results.Ok(response);
             });
