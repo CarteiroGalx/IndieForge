@@ -98,6 +98,7 @@ namespace IndieForge
             var admin = app.MapGroup("/api/admin").RequireAuthorization("AdminOnly");
             var projects = app.MapGroup("/api/projects");
             var auth = app.MapGroup("/api/auth");
+            var me = app.MapGroup("/api/me").RequireAuthorization();
             //-------
 
             app.MapGet("/api/ping", () => "Pong!");
@@ -146,8 +147,49 @@ namespace IndieForge
                     throw new InvalidOperationException("Email ja cadastrado");
 
                 await authService.Registrar(registerDto);
+                var token = await authService.GerarTokenConfirmacaoEmail(registerDto.Email);
 
-                return "Usuário registrado com sucesso";
+                return new { Token = token, Message = "Usuário registrado com sucesso", Info = "Utilize este token simulado para confirmar seu email" };
+            });
+
+            me.MapGet("/", async (AppDbContext _context, ClaimsPrincipal acess) =>
+            {
+                var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var userId))
+                    return Results.BadRequest();
+                
+                var user = await _context.Users.FindAsync(userId);
+                if (user is null)
+                    return Results.NotFound("Usuário não encontrado");
+                
+                return Results.Ok(new
+                {
+                    user.Nome,
+                    user.Email,
+                    user.EmailConfirmado,
+                    user.Role
+                });
+            });
+
+            me.MapGet("/confirm-email/{token}", async (AppDbContext _context, string token) =>
+            {
+                var confirmationToken = await _context.EmailConfirmationTokens.FirstOrDefaultAsync(t => t.Token == token);
+                if (confirmationToken == null || confirmationToken.Used || confirmationToken.ExpiresAt <= DateTime.UtcNow)
+                {
+                    return Results.NotFound("Token inválido ou expirado");
+                }
+
+                var user = await _context.Users.FindAsync(confirmationToken.UserId);
+                if (user == null)
+                {
+                    return Results.NotFound("Usuário não encontrado");
+                }
+
+                user.EmailConfirmado = true;
+                confirmationToken.Used = true;
+
+                await _context.SaveChangesAsync();
+                return Results.Ok("Email confirmado com sucesso");
             });
 
             admin.MapGet("/projects", async (AppDbContext _context) =>

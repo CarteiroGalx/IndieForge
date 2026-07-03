@@ -21,6 +21,7 @@ namespace IndieForge.Models
         [EmailAddress(ErrorMessage = "Deve ser um email válido")]
         [StringLength(256, ErrorMessage = "O email não pode ter mais de 256 caracteres")]
         public string Email { get; set; } = string.Empty;
+        public bool EmailConfirmado { get; set; } = false;
         public string SenhaHash { get; set; } = string.Empty;
         public List<Projeto> Projetos { get; set; } = [];
         public List<Contribuicao> Contribuicoes { get; set; } = [];

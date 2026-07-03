@@ -23,7 +23,7 @@ namespace IndieForge.Services
             _configuration = configuration;
         }
 
-        public async Task Registrar(RegisterDto register)
+        public async Task<string> Registrar(RegisterDto register)
         {
             var hasher = new PasswordHasher<User>();
             var user = new User
@@ -36,6 +36,7 @@ namespace IndieForge.Services
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+            return Guid.NewGuid().ToString(); // Retorna um token fictício para fins de demonstração
         }
 
         public async Task<string> Login(User user)
@@ -73,6 +74,28 @@ namespace IndieForge.Services
         public async Task StatusCheck()
         {
             
+        }
+
+        internal async Task<string> GerarTokenConfirmacaoEmail(string email)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user == null)
+            {
+                throw new InvalidOperationException("Usuário não encontrado");
+            }
+            
+            var token = Guid.NewGuid().ToString();
+            var emailToken = new EmailConfirmationToken
+            {
+                UserId = user.Id,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddHours(24) // Token expira em 24 horas
+            };
+
+            _context.EmailConfirmationTokens.Add(emailToken);
+            await _context.SaveChangesAsync();
+
+            return token;
         }
     }
 }
