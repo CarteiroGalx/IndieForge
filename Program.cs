@@ -171,7 +171,7 @@ namespace IndieForge
                 });
             });
 
-            me.MapGet("/confirm-email/{token}", async (AppDbContext _context, string token) =>
+            me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
             {
                 var confirmationToken = await _context.EmailConfirmationTokens.FirstOrDefaultAsync(t => t.Token == token);
                 if (confirmationToken == null || confirmationToken.Used || confirmationToken.ExpiresAt <= DateTime.UtcNow)
