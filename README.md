@@ -68,6 +68,14 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟨 Implementação dos Services
 - 🟨 Criação dos DTOs
 
+## Segurança
+
+- 🟥 Rate Limiting
+- 🟥 Confirmação de e-mail
+- 🟥 Recuperação de senha
+- 🟥 Alteração de senha
+- 🚀 Autenticação em dois fatores (2FA)
+
 ### Projetos
 
 - 🟩 Listar projetos
@@ -75,16 +83,30 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟨 Criar projeto
 - 🟥 Editar projeto
 - 🟥 Cancelar projeto
+- 🟥 Barra de progressão
+- 🟥 Pesquisar por nome
+- 🟥 Filtrar projetos
+- 🟥 Ordenação (mais recentes, mais arrecadados...)
+- 🚀 Categorias (RPG, Plataforma, Terror...)
+- 🚀 Upload de imagem de capa
 - 🚀 Comentários
 - 🚀 Avaliação de 0 a 5
 - 🚀 Botão de Denúncia (fraudes, roubo, plágio e etc)
 
 ### Contribuições
 
-- 🟨 Contribuir para um projeto
+- 🟩 Contribuir para um projeto
 - 🟥 Histórico de contribuições
 - 🟥 Ranking de apoiadores por projeto
 - 🚀 Recompensas por valor de contribuição
+
+## Usuários
+
+- 🟥 Visualizar perfil
+- 🟥 Editar perfil
+- 🚀 Alterar foto de perfil
+- 🚀 Seguir criadores
+- 🚀 Favoritar projetos
 
 ### Administração
 
