@@ -246,23 +246,28 @@ namespace IndieForge
                 return Results.Ok(project);
             });
 
-            projects.MapGet("/", async (AppDbContext _context) =>
+            projects.MapGet("/", async (AppDbContext _context, string? name = "", bool maisArrecadado = false) =>
             {
-                var projects = await _context.Projects
+                IQueryable<Projeto> projects = _context.Projects
                         .Where(p => p.Status != Status.Oculto)
                         .Include(c => c.Criador)
-                        .Include(p => p.Contribuicoes)
-                        .Select(p => new ProjectCardDto(
-                            p.Nome,
-                            p.Descricao,
-                            p.MetaFinanceira,
-                            (decimal)(p.Contribuicoes.Sum(c => (double?)c.Valor) ?? 0d),
-                            p.Status,
-                            p.DataCriacao,
-                            p.Criador.Nome
-                        ))
-                        .ToListAsync();
-                return projects;
+                        .Include(p => p.Contribuicoes);
+
+                if(!string.IsNullOrEmpty(name))
+                    projects = projects.Where(p => p.Nome.Contains(name));
+                        
+                var projectsList = projects.Select(p => new ProjectCardDto
+                {
+                    Nome = p.Nome,
+                    Descricao = p.Descricao,
+                    Meta = p.MetaFinanceira,
+                    Arrecadado = p.Contribuicoes.Sum(c => c.Valor),
+                    Status = p.Status,
+                    DataCriacao = p.DataCriacao,
+                    CriadorNome = p.Criador.Nome,
+                });
+
+                return await projectsList.ToListAsync();
             });
 
             admin.MapGet("/contributions", async (AppDbContext _context) =>
