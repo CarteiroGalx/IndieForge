@@ -241,21 +241,25 @@ namespace IndieForge
                 return contributions;
             });
 
-            projects.MapPost("/", async (AppDbContext _context, Guid idCriador, string nome, string descricao, decimal metaFinanceira) =>
+            projects.MapPost("/", async (AppDbContext _context, ClaimsPrincipal user, CreateProjectDto dto) =>
             {
+                var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var idCriador))
+                    return Results.BadRequest();
+
                 var project = new Projeto
                 {
                     IdCriador = idCriador,
-                    Nome = nome,
-                    Descricao = descricao,
-                    MetaFinanceira = metaFinanceira,
+                    Nome = dto.Nome,
+                    Descricao = dto.Descricao,
+                    MetaFinanceira = dto.MetaFinanceira,
                     Status = Status.Ativo
                 };
 
                 _context.Projects.Add(project);
                 await _context.SaveChangesAsync();
 
-                return project;
+                return Results.Created($"/api/projects/{project.Id}", new { project.Id, project.Nome, project.Descricao, project.MetaFinanceira, project.Status });
             });
 
             projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>
