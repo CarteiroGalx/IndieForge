@@ -169,13 +169,43 @@ namespace IndieForge
                 if (user is null)
                     return Results.NotFound("Usuário não encontrado");
                 
-                return Results.Ok(new
+                var response = new ResponseMeDto
                 {
-                    user.Nome,
-                    user.Email,
-                    user.EmailConfirmado,
-                    user.Role
-                });
+                    Nome = user.Nome,
+                    Email = user.Email,
+                    EmailConfirmado = user.EmailConfirmado,
+                    Projetos = await _context.Projects
+                        .Where(p => p.IdCriador == userId)
+                        .Select(p => new ProjectCardDto
+                        {
+                            Nome = p.Nome,
+                            Descricao = p.Descricao,
+                            Meta = p.MetaFinanceira,
+                            Arrecadado = 23,
+                            Status = p.Status,
+                            DataCriacao = p.DataCriacao,
+                            CriadorNome = user.Nome
+                        })
+                        .ToListAsync(),
+                    Contribuicoes = await _context.Contribuicoes
+                        .Where(c => c.UserId == userId)
+                        .Include(c => c.Projeto)
+                        .Select(c => new ContribuicaoDto
+                        {
+                            Valor = c.Valor,
+                            DataContribuicao = c.DataCriacao,
+                            projetoContribuido = new ProjectResumeDto
+                            {
+                                Nome = c.Projeto.Nome,
+                                Meta = c.Projeto.MetaFinanceira,
+                                Arrecadado = c.Projeto.Contribuicoes.Sum(contrib => contrib.Valor),
+                                DataCriacao = c.Projeto.DataCriacao
+                            }
+                        })
+                        .ToListAsync()
+                };
+                
+                return Results.Ok(response);
             });
 
             me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
