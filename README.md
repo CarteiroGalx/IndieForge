@@ -79,8 +79,8 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 ### Projetos
 
 - 🟩 Listar projetos
-- 🟨 Buscar projeto por Id
-- 🟨 Criar projeto
+- 🟩 Buscar projeto por Id
+- 🟩 Criar projeto
 - 🟥 Editar projeto
 - 🟥 Cancelar projeto
 - 🟥 Barra de progressão
@@ -186,6 +186,8 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 - Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o **.NET 8** instalado em sua máquina.
 - Depois, navegue até a pasta raiz do projeto
+- Você também vai precisar de uma **Connection String**, e que deve ser de um banco de dados que utilize PostgreeSQL.
+- Após pegar sua Connectrion Striing, vá até o arquivo `appsettings.json` e insira a string no local indicado.
 - Digite `dotnet run` no terminal que aponta para a raiz do projeto e aguarde a aplicação inicializar.
 - Após isso, poderá navegar até `http://localhost:5259/swagger/index.html` e testar a API através do Swagger.
 
