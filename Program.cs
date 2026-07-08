@@ -73,7 +73,7 @@ namespace IndieForge
             });
 
             builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite("Data Source=app.db"));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<AdminService>();
