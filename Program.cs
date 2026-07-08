@@ -204,6 +204,18 @@ namespace IndieForge
                 return await _context.Projects.ToListAsync();
             });
 
+            admin.MapPost("/projects/{id}/change-status", async (AppDbContext _context, Guid id, Status newStatus) =>
+            {
+                var project = await _context.Projects.FindAsync(id);
+                if (project is null)
+                    return Results.NotFound("Projeto não encontrado");
+
+                project.Status = newStatus;
+                await _context.SaveChangesAsync();
+
+                return Results.Ok(project);
+            });
+
             projects.MapGet("/", async (AppDbContext _context) =>
             {
                 var projects = await _context.Projects
