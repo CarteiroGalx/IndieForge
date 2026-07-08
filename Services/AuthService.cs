@@ -67,7 +67,7 @@ namespace IndieForge.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenString = tokenHandler.WriteToken(tokenDescriptor);
-
+            
             return tokenString;
         }
 

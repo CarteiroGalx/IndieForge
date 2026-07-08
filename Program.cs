@@ -129,16 +129,17 @@ namespace IndieForge
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
 
                 if (user is null)
-                    throw new InvalidOperationException("Nome de usuário ou senha inválidos");
+                    return new LoginResponseDto("Nome de usuário ou senha inválidos");
 
                 var hasher = new PasswordHasher<User>();
                 var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, loginDto.Password);
 
                 if (verification == PasswordVerificationResult.Failed)
-                    throw new InvalidOperationException("Nome de usuário ou senha inválidos");
+                    return new LoginResponseDto("Nome de usuário ou senha inválidos");
 
-                return await authService.Login(user);
-
+                var tokenString = await authService.Login(user);
+                var response = new LoginResponseDto(tokenString);
+                return response;
             });
 
             auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto, AuthService authService) =>
@@ -206,7 +207,7 @@ namespace IndieForge
                 };
                 
                 return Results.Ok(response);
-            });
+                });
 
             me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
             {
@@ -308,7 +309,7 @@ namespace IndieForge
                         p.Descricao,
                         p.MetaFinanceira,
                         p.Contribuicoes.Count(),
-                        (decimal)(p.Contribuicoes.Sum(c => (double?)c.Valor) ?? 0d),
+                        p.Contribuicoes.Sum(c => c.Valor),
                         p.Status,
                         p.DataCriacao,
                         p.Contribuicoes
