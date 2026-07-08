@@ -83,6 +83,13 @@ namespace IndieForge
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                context.Database.Migrate();
+                SeedUsersAsync(context).GetAwaiter().GetResult();
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -292,6 +299,64 @@ namespace IndieForge
             }).RequireAuthorization();
 
             app.Run();
+        }
+
+        private static async Task SeedUsersAsync(AppDbContext context)
+        {
+            var hasher = new PasswordHasher<User>();
+            var users = new[]
+            {
+                new
+                {
+                    Nome = "admin",
+                    Email = "admin@indieforge.com",
+                    Password = "Admin@123",
+                    Role = UserRole.Admin
+                },
+                new
+                {
+                    Nome = "ana",
+                    Email = "ana@indieforge.com",
+                    Password = "User@123",
+                    Role = UserRole.User
+                },
+                new
+                {
+                    Nome = "bruno",
+                    Email = "bruno@indieforge.com",
+                    Password = "User@123",
+                    Role = UserRole.User
+                },
+                new
+                {
+                    Nome = "carla",
+                    Email = "carla@indieforge.com",
+                    Password = "User@123",
+                    Role = UserRole.User
+                }
+            };
+
+            foreach (var seedUser in users)
+            {
+                var exists = await context.Users.AnyAsync(u =>
+                    u.Nome == seedUser.Nome || u.Email == seedUser.Email);
+
+                if (exists)
+                    continue;
+
+                var user = new User
+                {
+                    Nome = seedUser.Nome,
+                    Email = seedUser.Email,
+                    EmailConfirmado = true,
+                    Role = seedUser.Role
+                };
+
+                user.SenhaHash = hasher.HashPassword(user, seedUser.Password);
+                context.Users.Add(user);
+            }
+
+            await context.SaveChangesAsync();
         }
     }
 }
