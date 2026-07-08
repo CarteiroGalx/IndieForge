@@ -185,7 +185,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 ## Como testar o projeto
 
 - Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o **.NET 8** instalado em sua máquina.
-- Depois, navegue é a pasta raiz do projeto
+- Depois, navegue até a pasta raiz do projeto
 - Digite `dotnet run` no terminal que aponta para a raiz do projeto e aguarde a aplicação inicializar.
 - Após isso, poderá navegar até `http://localhost:5259/swagger/index.html` e testar a API através do Swagger.
 
