@@ -417,14 +417,32 @@ namespace IndieForge
                 if (projeto is null) return Results.NotFound("Projeto não encontrado");
 
                 var cont = new Contribuicao(
-                        userId,
-                        projeto.Id,
-                        dto.Valor
-                    );
+                    userId,
+                    projeto.Id,
+                    dto.Valor
+                );
 
                 _context.Contribuicoes.Add(cont);
-                await _context.SaveChangesAsync();
+                var arrecadadoAntes = projeto.TotalArrecadado;
 
+                projeto.TotalArrecadado += dto.Valor;
+                projeto.TotalContribuicoes++;
+
+                var metaFoiAtingida =
+                    arrecadadoAntes < projeto.MetaFinanceira &&
+                    projeto.TotalArrecadado >= projeto.MetaFinanceira;
+                if (metaFoiAtingida)
+                {
+                    projeto.Status = Status.EncerradoPorMeta;
+                }
+                await _context.SaveChangesAsync();
+                if (metaFoiAtingida)
+                {
+                    return Results.Ok(new
+                    {
+                        Message = "Você foi quem finalizou a meta. Parabéns!"
+                    });
+                }
                 return Results.Ok();
             }).RequireAuthorization();
 
