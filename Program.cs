@@ -4,10 +4,12 @@ using IndieForge.Models;
 using IndieForge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace IndieForge
@@ -110,7 +112,7 @@ namespace IndieForge
 
             app.MapGet("/api/ping", () => "Pong!");
 
-            app.MapGet("/api/check-auth", (ClaimsPrincipal user) => 
+            app.MapGet("/api/check-auth", (ClaimsPrincipal user) =>
             {
                 var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var userName = user.FindFirst(ClaimTypes.Name)?.Value;
@@ -165,11 +167,11 @@ namespace IndieForge
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
-                
+
                 var user = await _context.Users.FindAsync(userId);
                 if (user is null)
                     return Results.NotFound("Usuário não encontrado");
-                
+
                 var response = new ResponseMeDto
                 {
                     Nome = user.Nome,
@@ -205,9 +207,9 @@ namespace IndieForge
                         })
                         .ToListAsync()
                 };
-                
+
                 return Results.Ok(response);
-                });
+            });
 
             me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
             {
@@ -254,9 +256,9 @@ namespace IndieForge
                         .Include(c => c.Criador)
                         .Include(p => p.Contribuicoes);
 
-                if(!string.IsNullOrEmpty(name))
+                if (!string.IsNullOrEmpty(name))
                     projects = projects.Where(p => p.Nome.Contains(name));
-                        
+
                 var projectsList = projects.Select(p => new ProjectCardDto
                 {
                     Nome = p.Nome,
@@ -315,6 +317,63 @@ namespace IndieForge
                 await _context.SaveChangesAsync();
 
                 return Results.Ok("Senha alterada com sucesso!");
+            });
+            
+            //TODO: TERMINAR MÉTODO DE ALTERAR SENHA AQUI!!!
+            me.MapPost("/reset-password/", async (AppDbContext _context, string tokenString, string newPassword) => 
+            {
+                var token = await _context.PasswordRecuperationTokens.FirstOrDefaultAsync(t => t.Token == tokenString);
+
+                if(token.Used) return Results.BadRequest("Token inválido");
+
+                if(token.ExpiresAt < DateTime.UtcNow) return Results.BadRequest("Token inválido");
+
+                var user = await _context.Users.FindAsync(token.UserId);
+
+                if (user is null) return Results.BadRequest("Token inválido");
+
+                var hasher = new PasswordHasher<User>();
+
+                user.SenhaHash = hasher.HashPassword(user, newPassword);
+                token.Used = true;
+                _context.PasswordRecuperationTokens.Remove(token);
+                await _context.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+
+            me.MapPost("/forgot-password", async (AppDbContext _context, string email) =>
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                var tokenString = "";
+                if (user != null) 
+                {
+                    var oldTokens = await _context.PasswordRecuperationTokens
+                        .Where(t => t.UserId == user.Id && !t.Used)
+                        .ToListAsync();
+
+                    tokenString = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
+
+                    _context.PasswordRecuperationTokens.RemoveRange(oldTokens);
+
+                    var passwordRecoverToken = new PasswordRecuperationToken
+                    {
+                        UserId = user.Id,
+                        Token = tokenString,
+                        ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+                        Used = false
+                    };
+
+                    _context.PasswordRecuperationTokens.Add(passwordRecoverToken);
+                    await _context.SaveChangesAsync();
+                }
+
+                return new 
+                {
+                    Token = tokenString,
+                    Info = "ATENÇÃO: Num ambiente de produção real, a resposta da API não deve ser dessa forma. " +
+                    "O token é liberado aqui para facilitar os testes da API."
+                };
             });
 
             projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>

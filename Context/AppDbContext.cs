@@ -11,6 +11,7 @@ namespace IndieForge.Context
         public DbSet<Projeto> Projects { get; set; }
         public DbSet<Contribuicao> Contribuicoes { get; set; }
         public DbSet<EmailConfirmationToken> EmailConfirmationTokens { get; set; }
+        public DbSet<PasswordRecuperationToken> PasswordRecuperationTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
