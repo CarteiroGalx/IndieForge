@@ -71,9 +71,9 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 ## Segurança
 
 - 🟩 Confirmação de e-mail
+- 🟩 Recuperação de senha
+- 🟩 Alteração de senha
 - 🟥 Rate Limiting
-- 🟥 Recuperação de senha
-- 🟥 Alteração de senha
 - 🚀 Autenticação em dois fatores (2FA)
 
 ### Projetos
@@ -102,7 +102,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 ## Usuários
 
-- 🟥 Visualizar perfil
+- 🟩 Visualizar perfil
 - 🟥 Editar perfil
 - 🚀 Alterar foto de perfil
 - 🚀 Seguir criadores
