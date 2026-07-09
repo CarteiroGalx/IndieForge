@@ -36,8 +36,8 @@ namespace IndieForge.Models
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal MetaFinanceira { get; set; }
         public List<Contribuicao> Contribuicoes { get; set; } = [];
-        public int TotalContribuicoes => Contribuicoes.Count;
-        public decimal TotalArrecadado => Contribuicoes.Sum(c => c.Valor);
+        public int TotalContribuicoes { get; set; }
+        public decimal TotalArrecadado { get; set; }
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
         [Required(ErrorMessage = "O status é obrigatório")]
         public Status Status { get; set; } = Status.Ativo;
