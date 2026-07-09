@@ -7,7 +7,8 @@ namespace IndieForge.Models
     {
         Ativo,
         Oculto,
-        Encerrado
+        EncerradoPorMeta,
+        EncerradoPeloCriador
     }
 
     public class Projeto
@@ -31,7 +32,7 @@ namespace IndieForge.Models
         public string Descricao { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "A meta financeira é obrigatória")]
-        [Range(0.01, 100_000_000, ErrorMessage = "A meta deve ser maior que zero")]
+        [Range(0.01, 999_999_999, ErrorMessage = "A meta deve ser maior que zero")]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal MetaFinanceira { get; set; }
         public List<Contribuicao> Contribuicoes { get; set; } = [];
