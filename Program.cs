@@ -298,6 +298,25 @@ namespace IndieForge
                 return Results.Created($"/api/projects/{project.Id}", new { project.Id, project.Nome, project.Descricao, project.MetaFinanceira, project.Status });
             });
 
+            me.MapPatch("/change-password", async (AppDbContext _context, ClaimsPrincipal acess, ChangePasswordDto dto) =>
+            {
+                var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var userId))
+                    return Results.BadRequest();
+
+                var user = await _context.Users.FindAsync(userId);
+                if (user is null) return Results.NotFound("Usuário não encontrado");
+
+                if (dto.SenhaAtual != dto.SenhaConfirmacao) return Results.BadRequest("As senhas devem coincidirem");
+
+                var hash = new PasswordHasher<User>();
+                user.SenhaHash = hash.HashPassword(user, dto.NovaSenha);
+
+                await _context.SaveChangesAsync();
+
+                return Results.Ok("Senha alterada com sucesso!");
+            });
+
             projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>
             {
                 var response = await _context.Projects
