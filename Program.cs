@@ -361,10 +361,11 @@ namespace IndieForge
             me.MapPost("/reset-password/", async (AppDbContext _context, string tokenString, string newPassword) => 
             {
                 var token = await _context.PasswordRecuperationTokens.FirstOrDefaultAsync(t => t.Token == tokenString);
+                if (token is null) return Results.BadRequest("Token inválido");
 
-                if(token.Used) return Results.BadRequest("Token inválido");
+                if (token.Used) return Results.BadRequest("Token inválido");
 
-                if(token.ExpiresAt < DateTime.UtcNow) return Results.BadRequest("Token inválido");
+                if (token.ExpiresAt < DateTime.UtcNow) return Results.BadRequest("Token inválido");
 
                 var user = await _context.Users.FindAsync(token.UserId);
 
