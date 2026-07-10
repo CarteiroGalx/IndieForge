@@ -445,6 +445,21 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
+            projects.MapPost("/alterar-meta", async (AppDbContext _context, ChangeMetaFinanceiraDto dto, ClaimsPrincipal acess) =>
+            {
+                var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var userId)) return Results.Unauthorized();
+
+                var projeto = await _context.Projects.FindAsync(dto.ProjetoId);
+                if (projeto is null) return Results.NotFound();
+                if (projeto.TotalContribuicoes > 0)
+                    return Results.BadRequest("Você não pode alterar a meta de um projeto que já tenha contribuições!");
+                
+                projeto.MetaFinanceira = dto.NovoValor;
+                await _context.SaveChangesAsync();
+                return Results.Ok("Meta alterada com sucesso!");
+            }); 
+
             projects.MapPost("/contribution", async (AppDbContext _context, CreateContributionDto dto, ClaimsPrincipal user) =>
             {
                 var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
