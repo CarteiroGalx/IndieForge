@@ -28,5 +28,6 @@ namespace IndieForge.Models
 
         [Required(ErrorMessage = "O papel do usuário é obrigatório")]
         public UserRole Role { get; set; } = UserRole.User;
+        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
     }
 }
