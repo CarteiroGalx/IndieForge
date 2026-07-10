@@ -58,6 +58,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟩 Modelagem das entidades
 - 🟩 Configuração do Context
 - 🟩 Autenticação JWT
+- 🟩 Instâncias Seeds
 - 🟥 Configuração do CORS
 - 🚀 Tratamento global de exceções
 - 🚀 Docker

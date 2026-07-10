@@ -1,6 +1,7 @@
 using IndieForge.Context;
 using IndieForge.DTOs;
 using IndieForge.Models;
+using IndieForge.Models.Seeders;
 using IndieForge.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -16,7 +17,7 @@ namespace IndieForge
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -89,7 +90,7 @@ namespace IndieForge
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 context.Database.Migrate();
-                SeedUsersAsync(context).GetAwaiter().GetResult();
+                await DatabaseSeeder.SeedAsync(context);
             }
 
             if (app.Environment.IsDevelopment())

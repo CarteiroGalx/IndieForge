@@ -10,7 +10,7 @@ namespace IndieForge.Models
 
         [Required(ErrorMessage = "O ID do usuário é obrigatório")]
         [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; set; } 
 
         [Required(ErrorMessage = "O usuário é obrigatório")]
         public User User { get; set; } = null!;
@@ -30,6 +30,8 @@ namespace IndieForge.Models
         [Display(Name = "Data de Criação")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}")]
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+
+        public Contribuicao() { }
 
         public Contribuicao(Guid userId, Guid projectId, decimal valor)
         {
