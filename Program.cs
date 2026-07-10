@@ -250,25 +250,62 @@ namespace IndieForge
                 return Results.Ok(project);
             });
 
-            projects.MapGet("/", async (AppDbContext _context, string? name = "", bool maisArrecadado = false) =>
+            projects.MapGet("/", async (AppDbContext _context,
+                                       string? name = "",
+                                       bool maisArrecadado = false,
+                                       decimal? minArrecadado = null,
+                                       Status? status = null,
+                                       string? ordenarPor = "criacao",
+                                       bool desc = false) =>
             {
                 IQueryable<Projeto> projects = _context.Projects
                         .Where(p => p.Status != Status.Oculto)
-                        .Include(c => c.Criador)
+                        .Include(p => p.Criador)
                         .Include(p => p.Contribuicoes);
 
-                if (!string.IsNullOrEmpty(name))
+                if (!string.IsNullOrWhiteSpace(name))
                     projects = projects.Where(p => p.Nome.Contains(name));
 
-                var projectsList = projects.Select(p => new ProjectCardDto
+                if (status.HasValue)
+                    projects = projects.Where(p => p.Status == status.Value);
+
+                // Projeção com soma das contribuições para permitir filtragem/ordenação por valor arrecadado
+                var projected = projects
+                    .Select(p => new
                 {
-                    Nome = p.Nome,
-                    Descricao = p.Descricao,
-                    Meta = p.MetaFinanceira,
-                    Arrecadado = p.Contribuicoes.Sum(c => c.Valor),
-                    Status = p.Status,
-                    DataCriacao = p.DataCriacao,
-                    CriadorNome = p.Criador.Nome,
+                        p,
+                        Arrecadado = p.Contribuicoes.Sum(c => c.Valor)
+                });
+
+                if (minArrecadado.HasValue)
+                    projected = projected.Where(x => x.Arrecadado >= minArrecadado.Value);
+
+                // Ordenação: prioridade para "maisArrecadado", senão usar ordenarPor (criacao, nome, meta)
+                if (maisArrecadado)
+                {
+                    projected = projected.OrderByDescending(x => x.Arrecadado);
+                }
+                else
+                {
+                    bool asc = !desc;
+                    projected = (ordenarPor ?? "criacao").ToLowerInvariant() 
+                    switch
+                    {
+                        "nome" => asc ? projected.OrderBy(x => x.p.Nome) : projected.OrderByDescending(x => x.p.Nome),
+                        "meta" or "metafinanceira" => asc ? projected.OrderBy(x => x.p.MetaFinanceira) : projected.OrderByDescending(x => x.p.MetaFinanceira),
+                        _ => asc ? projected.OrderBy(x => x.p.DataCriacao) : projected.OrderByDescending(x => x.p.DataCriacao),
+                    };
+                }
+
+                var projectsList = projected.Select(x => new ProjectCardDto
+                {
+                    Nome = x.p.Nome,
+                    Descricao = x.p.Descricao,
+                    Meta = x.p.MetaFinanceira,
+                    Arrecadado = x.Arrecadado,
+                    Status = x.p.Status,
+                    DataCriacao = x.p.DataCriacao,
+                    CriadorNome = x.p.Criador.Nome,
                 });
 
                 return await projectsList.ToListAsync();
