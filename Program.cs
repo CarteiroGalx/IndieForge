@@ -272,10 +272,10 @@ namespace IndieForge
                 // Projeção com soma das contribuições para permitir filtragem/ordenação por valor arrecadado
                 var projected = projects
                     .Select(p => new
-                {
+                    {
                         p,
                         Arrecadado = p.Contribuicoes.Sum(c => c.Valor)
-                });
+                    });
 
                 if (minArrecadado.HasValue)
                     projected = projected.Where(x => x.Arrecadado >= minArrecadado.Value);
@@ -356,9 +356,8 @@ namespace IndieForge
 
                 return Results.Ok("Senha alterada com sucesso!");
             });
-            
-            //TODO: TERMINAR MÉTODO DE ALTERAR SENHA AQUI!!!
-            me.MapPost("/reset-password/", async (AppDbContext _context, string tokenString, string newPassword) => 
+
+            me.MapPost("/reset-password/", async (AppDbContext _context, string tokenString, string newPassword) =>
             {
                 var token = await _context.PasswordRecuperationTokens.FirstOrDefaultAsync(t => t.Token == tokenString);
                 if (token is null) return Results.BadRequest("Token inválido");
@@ -385,7 +384,7 @@ namespace IndieForge
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                 var tokenString = "";
-                if (user != null) 
+                if (user != null)
                 {
                     var oldTokens = await _context.PasswordRecuperationTokens
                         .Where(t => t.UserId == user.Id && !t.Used)
@@ -407,7 +406,7 @@ namespace IndieForge
                     await _context.SaveChangesAsync();
                 }
 
-                return new 
+                return new
                 {
                     Token = tokenString,
                     Info = "ATENÇÃO: Num ambiente de produção real, a resposta da API não deve ser dessa forma. " +
@@ -486,64 +485,6 @@ namespace IndieForge
             }).RequireAuthorization();
 
             app.Run();
-        }
-
-        private static async Task SeedUsersAsync(AppDbContext context)
-        {
-            var hasher = new PasswordHasher<User>();
-            var users = new[]
-            {
-                new
-                {
-                    Nome = "admin",
-                    Email = "admin@indieforge.com",
-                    Password = "Admin@123",
-                    Role = UserRole.Admin
-                },
-                new
-                {
-                    Nome = "ana",
-                    Email = "ana@indieforge.com",
-                    Password = "User@123",
-                    Role = UserRole.User
-                },
-                new
-                {
-                    Nome = "bruno",
-                    Email = "bruno@indieforge.com",
-                    Password = "User@123",
-                    Role = UserRole.User
-                },
-                new
-                {
-                    Nome = "carla",
-                    Email = "carla@indieforge.com",
-                    Password = "User@123",
-                    Role = UserRole.User
-                }
-            };
-
-            foreach (var seedUser in users)
-            {
-                var exists = await context.Users.AnyAsync(u =>
-                    u.Nome == seedUser.Nome || u.Email == seedUser.Email);
-
-                if (exists)
-                    continue;
-
-                var user = new User
-                {
-                    Nome = seedUser.Nome,
-                    Email = seedUser.Email,
-                    EmailConfirmado = true,
-                    Role = seedUser.Role
-                };
-
-                user.SenhaHash = hasher.HashPassword(user, seedUser.Password);
-                context.Users.Add(user);
-            }
-
-            await context.SaveChangesAsync();
         }
     }
 }
