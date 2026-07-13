@@ -402,7 +402,7 @@ namespace IndieForge
                 return Results.Ok();
             });
 
-            me.MapPost("/forgot-password", async (AppDbContext _context, string email) =>
+            app.MapPost("/forgot-password", async (AppDbContext _context, string email) =>
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
                 var tokenString = "";
