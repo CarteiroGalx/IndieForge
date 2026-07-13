@@ -212,6 +212,28 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
+            me.MapPatch("projects/edit-project/{id}", async (Guid id, AppDbContext _context, EditProjectDto dto, ClaimsPrincipal acess) => 
+            {
+                var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var userId))
+                    return Results.BadRequest();
+
+                var user = await _context.Users.FindAsync(userId);
+                if(user is null) return Results.Unauthorized();
+
+                var project = await _context.Projects.FindAsync(id);
+                if(project is null) return Results.NotFound();
+
+                if(project.IdCriador != userId) return Results.BadRequest();
+
+                project.Nome = dto.Name;
+                project.Descricao = dto.Description;
+
+                await _context.SaveChangesAsync();
+                return Results.Ok("Projeto alterado com sucesso.");
+                    
+            });
+
             me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
             {
                 var confirmationToken = await _context.EmailConfirmationTokens.FirstOrDefaultAsync(t => t.Token == token);
