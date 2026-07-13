@@ -42,5 +42,6 @@ namespace IndieForge.Models
         public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
         [Required(ErrorMessage = "O status é obrigatório")]
         public Status Status { get; set; } = Status.Ativo;
+        public decimal Percentage => (TotalArrecadado / MetaFinanceira) * 100;
     }
 }

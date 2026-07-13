@@ -16,8 +16,9 @@ namespace IndieForge.DTOs
         public Status Status { get; set; }
         public DateTime DataCriacao { get; set; }
         public List<ContributionResponseDto> Contribuicoes { get; set; } = new List<ContributionResponseDto>();
+        public decimal Porcentagem { get; set; }
 
-        public ProjectDetailsDto(string nome, string descricao, decimal metaFinanceira, int totalContribuicoes, decimal totalArrecadado, Status status, DateTime data, List<ContributionResponseDto> contribuicoes)
+        public ProjectDetailsDto(string nome, string descricao, decimal metaFinanceira, int totalContribuicoes, decimal totalArrecadado, Status status, DateTime data, List<ContributionResponseDto> contribuicoes, decimal porcentagem)
         {
             Nome = nome;
             Descricao = descricao;
@@ -27,6 +28,7 @@ namespace IndieForge.DTOs
             Status = status;
             DataCriacao = data;
             Contribuicoes = contribuicoes;
+            Porcentagem = porcentagem;
         }
 
         public ProjectDetailsDto(string nome, string descricao, decimal metaFinanceira, int totalContribuicoes, decimal totalArrecadado, Status status, DateTime data)

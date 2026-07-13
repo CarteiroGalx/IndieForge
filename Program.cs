@@ -457,7 +457,8 @@ namespace IndieForge
                                 c.DataCriacao,
                                 c.User.Nome
                             ))
-                            .ToList()
+                            .ToList(),
+                        Math.Round(p.Percentage, 2)
                     ))
                     .FirstOrDefaultAsync();
 
