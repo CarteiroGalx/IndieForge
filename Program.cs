@@ -484,6 +484,22 @@ namespace IndieForge
                 return Results.Ok("Meta alterada com sucesso!");
             }); 
 
+            me.MapPost("/cancelar-projeto/{id}", async (AppDbContext _context, Guid id, ClaimsPrincipal acess) =>
+            {
+                var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(userIdFromToken, out var userId)) return Results.Unauthorized();
+
+                var projeto = await _context.Projects.FindAsync(id);
+                if (projeto is null) return Results.NotFound();
+
+                if(projeto.IdCriador != userId) return Results.Unauthorized();
+                projeto.Status = Status.Cancelado;
+
+                await _context.SaveChangesAsync();
+
+                return Results.Ok("Projeto cancelado.");
+            });
+
             projects.MapPost("/contribution", async (AppDbContext _context, CreateContributionDto dto, ClaimsPrincipal user) =>
             {
                 var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
