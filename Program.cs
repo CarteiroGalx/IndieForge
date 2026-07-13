@@ -483,7 +483,7 @@ namespace IndieForge
                 projeto.MetaFinanceira = dto.NovoValor;
                 await _context.SaveChangesAsync();
                 return Results.Ok("Meta alterada com sucesso!");
-            }); 
+            });
 
             me.MapPost("/cancelar-projeto/{id}", async (AppDbContext _context, Guid id, ClaimsPrincipal acess) =>
             {
@@ -509,6 +509,8 @@ namespace IndieForge
 
                 var projeto = await _context.Projects.FindAsync(dto.ProjetoId);
                 if (projeto is null) return Results.NotFound("Projeto não encontrado");
+
+                if (projeto.Status != Status.Ativo) return Results.BadRequest("Este projeto não está mais disponível");
 
                 var cont = new Contribuicao(
                     userId,
