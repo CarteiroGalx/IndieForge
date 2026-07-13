@@ -85,9 +85,9 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟩 Pesquisar por nome
 - 🟩 Filtrar projetos
 - 🟩 Ordenação (mais recentes, mais arrecadados...)
-- 🟨 Alterar meta do projeto (com restrição)
-- 🟥 Cancelar projeto
-- 🟥 Barra de progressão
+- 🟩 Alterar meta do projeto (com restrição)
+- 🟩 Cancelar projeto
+- 🟩 Barra de progressão
 - 🚀 Categorias (RPG, Plataforma, Terror...)
 - 🚀 Upload de imagem de capa
 - 🚀 Comentários
