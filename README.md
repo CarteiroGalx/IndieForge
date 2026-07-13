@@ -69,7 +69,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟨 Implementação dos Services
 - 🟨 Criação dos DTOs
 
-## Segurança
+### Segurança
 
 - 🟩 Confirmação de e-mail
 - 🟩 Recuperação de senha
