@@ -185,7 +185,7 @@ namespace IndieForge
                             Nome = p.Nome,
                             Descricao = p.Descricao,
                             Meta = p.MetaFinanceira,
-                            Arrecadado = 23,
+                            Arrecadado = p.TotalArrecadado,
                             Status = p.Status,
                             DataCriacao = p.DataCriacao,
                             CriadorNome = user.Nome
