@@ -404,10 +404,10 @@ namespace IndieForge
 
             app.MapPost("/forgot-password", async (AppDbContext _context, string email) =>
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-                var tokenString = "";
-                if (user != null)
-                {
+               var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+               var tokenString = "";
+               if (user != null)
+               {
                     var oldTokens = await _context.PasswordRecuperationTokens
                         .Where(t => t.UserId == user.Id && !t.Used)
                         .ToListAsync();
@@ -426,14 +426,14 @@ namespace IndieForge
 
                     _context.PasswordRecuperationTokens.Add(passwordRecoverToken);
                     await _context.SaveChangesAsync();
-                }
+               }
 
-                return new
-                {
+               return new
+               {
                     Token = tokenString,
                     Info = "ATENÇÃO: Num ambiente de produção real, a resposta da API não deve ser dessa forma. " +
                     "O token é liberado aqui para facilitar os testes da API."
-                };
+               };
             });
 
             projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>
@@ -467,7 +467,7 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            projects.MapPost("/alterar-meta", async (AppDbContext _context, ChangeMetaFinanceiraDto dto, ClaimsPrincipal acess) =>
+            me.MapPost("/alterar-meta", async (AppDbContext _context, ChangeMetaFinanceiraDto dto, ClaimsPrincipal acess) =>
             {
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId)) return Results.Unauthorized();
@@ -476,6 +476,8 @@ namespace IndieForge
                 if (projeto is null) return Results.NotFound();
                 if (projeto.TotalContribuicoes > 0)
                     return Results.BadRequest("Você não pode alterar a meta de um projeto que já tenha contribuições!");
+
+                if(projeto.IdCriador != userId) return Results.Unauthorized();
                 
                 projeto.MetaFinanceira = dto.NovoValor;
                 await _context.SaveChangesAsync();
