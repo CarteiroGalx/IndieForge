@@ -109,6 +109,7 @@ namespace IndieForge
             var projects = app.MapGroup("/api/projects");
             var auth = app.MapGroup("/api/auth");
             var me = app.MapGroup("/api/me").RequireAuthorization();
+            var dashboard = app.MapGroup("/api/admin/dashboard").RequireAuthorization("AdminOnly");
             //-------
 
             app.MapGet("/api/ping", () => "Pong!");
@@ -541,6 +542,11 @@ namespace IndieForge
                 }
                 return Results.Ok();
             }).RequireAuthorization();
+
+            dashboard.MapGet("/", async (AppDbContext context) =>
+            {
+
+            });
 
             app.Run();
         }

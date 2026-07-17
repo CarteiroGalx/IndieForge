@@ -68,6 +68,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 - 🟨 Implementação dos Services
 - 🟨 Criação dos DTOs
+- 🟥 Resolver repetição de código
 
 ### Segurança
 
