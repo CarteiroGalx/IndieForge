@@ -66,8 +66,8 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 ### Arquitetura
 
+- 🟩 Criação dos DTOs
 - 🟨 Implementação dos Services
-- 🟨 Criação dos DTOs
 - 🟥 Resolver repetição de código
 
 ### Segurança
@@ -127,7 +127,24 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 <details>
 <summary>Ver andamento do Front-end</summary>
 
-- Preenchimento em breve...
+### Telas
+
+- 🟨 Tela de login/cadastro
+- 🟥 Tela de criação de projeto
+- 🟥 Tela de mais detalhes de projeto
+- 🟥 Tela de mais detalhes de um perfil da plataforma
+- 🟥 Tela do próprio perfil
+- 🟥 Tela de Dashboard
+- 🟥 Home Page (apresentação de todos os projetos como visitante)
+
+### Lógica e roteamento
+
+- 🟥 Login/Cadastro
+- 🟥 Definição das URLs
+- 🟥 Criação de projeto
+- 🟥 Contribuição
+- 🟥 Buscar pro projetos
+
 </details>
 
 # Tecnologias usadas
