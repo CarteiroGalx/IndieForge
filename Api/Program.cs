@@ -23,6 +23,13 @@ namespace IndieForge
 
             builder.Services.AddAuthorization();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+            });
             builder.Services.AddAuthorization(options =>
                 {
                     options.AddPolicy("AdminOnly", policy =>
@@ -101,6 +108,7 @@ namespace IndieForge
 
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
 
