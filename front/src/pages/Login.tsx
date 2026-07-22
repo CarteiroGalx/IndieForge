@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import logo from '../assets/logo.png'
+import { Link } from 'react-router-dom'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -9,11 +10,6 @@ export default function Login() {
     event.preventDefault()
     // TODO: implementar lógica de autenticação
     console.log('login submit:', { email, password })
-  }
-
-  const handleRegister = () => {
-    // TODO: navegar para tela de registro ou abrir modal de inscrição
-    console.log('register action triggered')
   }
 
   return (
@@ -66,12 +62,7 @@ export default function Login() {
             </div>
 
             <div className="text-center text-white-50 mb-0">
-              <small>Ainda não tem conta?</small>
-            </div>
-            <div className="d-grid gap-2 mt-2">
-              <button type="button" className="btn btn-outline-warning text-white" onClick={handleRegister}>
-                Registrar-se
-              </button>
+              <small>Ainda não tem conta? <Link to="/register">Clique aqui</Link></small>
             </div>
           </form>
         </div>
