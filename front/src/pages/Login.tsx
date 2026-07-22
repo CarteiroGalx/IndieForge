@@ -6,7 +6,7 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = (event: React.SubmitEvent) => {
+  const handleLogin = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     // TODO: implementar lógica de autenticação
     console.log('login submit:', { email, password })
