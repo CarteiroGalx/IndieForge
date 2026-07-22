@@ -59,7 +59,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟩 Configuração do Context
 - 🟩 Autenticação JWT
 - 🟩 Instâncias Seeds
-- 🟥 Configuração do CORS
+- 🟩 Configuração do CORS
 - 🚀 Tratamento global de exceções
 - 🚀 Docker
 - 🚀 Deploy na Azure
@@ -164,7 +164,11 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 <summary><strong>Front-end</strong></summary>
 
-- Em breve...
+- React
+- React Router
+- Axios
+- TypeScript
+- Bootstrap
 
 </details>
 <details>
