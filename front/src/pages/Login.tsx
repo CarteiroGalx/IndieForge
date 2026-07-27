@@ -6,7 +6,7 @@ export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = (event: React.SubmitEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     setLoading(true)
     console.log('login submit:', { username, password })
