@@ -75,6 +75,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - 🟩 Confirmação de e-mail
 - 🟩 Recuperação de senha
 - 🟩 Alteração de senha
+- 🟨 Validação em entradas de dados
 - 🚀 Rate Limiting
 - 🚀 Autenticação em dois fatores (2FA)
 
