@@ -1,3 +1,4 @@
+using FluentValidation;
 using IndieForge.Context;
 using IndieForge.DTOs;
 using IndieForge.Models;
@@ -90,6 +91,7 @@ namespace IndieForge
             builder.Services.AddScoped<ContributionService>();
             builder.Services.AddScoped<ProjectService>();
             builder.Services.AddScoped<AccountService>();
+            builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
 
             var app = builder.Build();
 
@@ -136,9 +138,12 @@ namespace IndieForge
                 };
             }).RequireAuthorization();
 
-            auth.MapPost("/login", async (AppDbContext _context, LoginDto loginDto, AuthService authService) =>
+            auth.MapPost("/login", async (AppDbContext _context, IValidator<LoginDto> validation, LoginDto loginDto, AuthService authService) =>
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
+                var validationResult = await validation.ValidateAsync(loginDto);
+                if (!validationResult.IsValid) return Results.ValidationProblem(validationResult.ToDictionary());
+                
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.Username);
 
                 if (user is null)
                     return Results.Json(

@@ -19,7 +19,14 @@ export default function Login() {
       localStorage.setItem('token', response.data.message)
       console.log(localStorage.getItem('token'))
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao fazer login. Tente novamente.')
+      if(err.response?.status === 401) setError(err.response?.data?.message || 'Credenciais inválidas')
+
+      const errors = err.response?.data?.errors
+      
+      if(errors?.Username || errors?.Password) {
+        setError(errors?.Username?.[0] || errors?.Password?.[0])
+      }
+      console.error('Login error:', err.response?.data)
     }
     setLoading(false)
   }
@@ -72,7 +79,7 @@ export default function Login() {
             </div>
 
             <div className="fs-6 mb-3 text-center">
-              {error && <p className="text-danger">{error}</p>}
+              {error && <p className="text-danger" style={{ fontSize: '0.875rem' }}>{error}</p>}
             </div>
             <div className="d-grid gap-2 mb-3">
               <button type="submit" className="btn btn-warning btn-lg text-uppercase fw-semibold">

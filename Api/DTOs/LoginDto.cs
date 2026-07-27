@@ -7,7 +7,7 @@ namespace IndieForge.DTOs
 {
     public class LoginDto
     {
-        public string UserName { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 }
