@@ -141,17 +141,23 @@ namespace IndieForge
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Nome == loginDto.UserName);
 
                 if (user is null)
-                    return new LoginResponseDto("Nome de usuário ou senha inválidos");
+                    return Results.Json(
+                                new LoginResponseDto("Nome de usuário ou senha inválidos"),
+                                statusCode: StatusCodes.Status401Unauthorized
+                            );
 
                 var hasher = new PasswordHasher<User>();
                 var verification = hasher.VerifyHashedPassword(user, user.SenhaHash, loginDto.Password);
 
                 if (verification == PasswordVerificationResult.Failed)
-                    return new LoginResponseDto("Nome de usuário ou senha inválidos");
-
+                    return Results.Json(
+                                new LoginResponseDto("Nome de usuário ou senha inválidos"),
+                                statusCode: StatusCodes.Status401Unauthorized
+                                );
+                
                 var tokenString = await authService.Login(user);
                 var response = new LoginResponseDto(tokenString);
-                return response;
+                return Results.Ok(response);
             });
 
             auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto, AuthService authService) =>
@@ -221,26 +227,26 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            me.MapPatch("projects/edit-project/{id}", async (Guid id, AppDbContext _context, EditProjectDto dto, ClaimsPrincipal acess) => 
+            me.MapPatch("projects/edit-project/{id}", async (Guid id, AppDbContext _context, EditProjectDto dto, ClaimsPrincipal acess) =>
             {
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
 
                 var user = await _context.Users.FindAsync(userId);
-                if(user is null) return Results.Unauthorized();
+                if (user is null) return Results.Unauthorized();
 
                 var project = await _context.Projects.FindAsync(id);
-                if(project is null) return Results.NotFound();
+                if (project is null) return Results.NotFound();
 
-                if(project.IdCriador != userId) return Results.BadRequest();
+                if (project.IdCriador != userId) return Results.BadRequest();
 
                 project.Nome = dto.Name;
                 project.Descricao = dto.Description;
 
                 await _context.SaveChangesAsync();
                 return Results.Ok("Projeto alterado com sucesso.");
-                    
+
             });
 
             me.MapGet("/confirm-email", async (AppDbContext _context, string token) =>
@@ -319,7 +325,7 @@ namespace IndieForge
                 else
                 {
                     bool asc = !desc;
-                    projected = (ordenarPor ?? "criacao").ToLowerInvariant() 
+                    projected = (ordenarPor ?? "criacao").ToLowerInvariant()
                     switch
                     {
                         "nome" => asc ? projected.OrderBy(x => x.p.Nome) : projected.OrderByDescending(x => x.p.Nome),
@@ -413,10 +419,10 @@ namespace IndieForge
 
             app.MapPost("/forgot-password", async (AppDbContext _context, string email) =>
             {
-               var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-               var tokenString = "";
-               if (user != null)
-               {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                var tokenString = "";
+                if (user != null)
+                {
                     var oldTokens = await _context.PasswordRecuperationTokens
                         .Where(t => t.UserId == user.Id && !t.Used)
                         .ToListAsync();
@@ -435,14 +441,14 @@ namespace IndieForge
 
                     _context.PasswordRecuperationTokens.Add(passwordRecoverToken);
                     await _context.SaveChangesAsync();
-               }
+                }
 
-               return new
-               {
+                return new
+                {
                     Token = tokenString,
                     Info = "ATENÇÃO: Num ambiente de produção real, a resposta da API não deve ser dessa forma. " +
-                    "O token é liberado aqui para facilitar os testes da API."
-               };
+                     "O token é liberado aqui para facilitar os testes da API."
+                };
             });
 
             projects.MapGet("/{id}", async (AppDbContext _context, Guid id) =>
@@ -487,8 +493,8 @@ namespace IndieForge
                 if (projeto.TotalContribuicoes > 0)
                     return Results.BadRequest("Você não pode alterar a meta de um projeto que já tenha contribuições!");
 
-                if(projeto.IdCriador != userId) return Results.Unauthorized();
-                
+                if (projeto.IdCriador != userId) return Results.Unauthorized();
+
                 projeto.MetaFinanceira = dto.NovoValor;
                 await _context.SaveChangesAsync();
                 return Results.Ok("Meta alterada com sucesso!");
@@ -502,7 +508,7 @@ namespace IndieForge
                 var projeto = await _context.Projects.FindAsync(id);
                 if (projeto is null) return Results.NotFound();
 
-                if(projeto.IdCriador != userId) return Results.Unauthorized();
+                if (projeto.IdCriador != userId) return Results.Unauthorized();
                 projeto.Status = Status.Cancelado;
 
                 await _context.SaveChangesAsync();

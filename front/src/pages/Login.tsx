@@ -7,14 +7,20 @@ export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     setLoading(true)
+    setError(null)
     console.log('login submit:', { username, password })
-    const response = await axios.post('http://localhost:5259/api/auth/login', { username, password })
-    localStorage.setItem('token', response.data.message)
-    console.log(localStorage.getItem('token'))
+    try {
+      const response = await axios.post('http://localhost:5259/api/auth/login', { username, password })
+      localStorage.setItem('token', response.data.message)
+      console.log(localStorage.getItem('token'))
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Erro ao fazer login. Tente novamente.')
+    }
     setLoading(false)
   }
 
@@ -29,7 +35,7 @@ export default function Login() {
         <div className="card-body p-3">
           <div className="col-12 text-center mb-4">
             <img className='col-4' src={logo} alt="IndieForge Logo" />
-            <h2 className="fw-bold" style={{ color: '#ff8c00' }}>
+            <h2 className="fw-bold" style={{ color: '#ffaa00' }}>
               IndieForge
             </h2>
             <p className="text-white-50">Faça login para acessar sua área de creator.</p>
@@ -65,6 +71,9 @@ export default function Login() {
               />
             </div>
 
+            <div className="fs-6 mb-3 text-center">
+              {error && <p className="text-danger">{error}</p>}
+            </div>
             <div className="d-grid gap-2 mb-3">
               <button type="submit" className="btn btn-warning btn-lg text-uppercase fw-semibold">
                 Entrar
