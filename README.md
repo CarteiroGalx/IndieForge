@@ -157,7 +157,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - Entity Framework Core
 - JWT
 - PasswordHasher
-- SQLite
+- PostgreSQL
 
 </details>
 <details>
@@ -169,6 +169,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - Axios
 - TypeScript
 - Bootstrap
+- LocalStorage
 
 </details>
 <details>
