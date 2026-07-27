@@ -217,4 +217,21 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 ### Registros Seeds
 
-- Em breve...
+O projeto também tem Seeds para que outras pessoas possam testar o funcionamento da API de forma fácil. Quando começar a aplicação pela primeira vez, o seu banco de dados será preenchido com exatamente **10 Users**, **18 Projects** (pertecentes a alguns Users) e **21 Contributions**, variando entre cada projeto.
+
+Para acessar e testar a API, é super simples. Na tela de Login, você pode escolher um destes nomes de usuários fictícios abaixo:
+
+- Admin
+- João Silva
+- Mariana Costa
+- Lucas Pereira
+- Ana Oliveira
+- Pedro Santos
+- Carla Mendes
+- Rafael Gomes
+- Beatriz Almeida
+- Thiago Ribeiro
+
+A senha de cada um deles é simplesmente **User@x**, aonde **x** é sua posição na lista acima, de cima pra baixo. Por exemplo, o do **Admin** seria **User@1**.
+
+É bom começar pelo Admin, já que esta conta possui privilégios de administrador que o permite explorar 100% do projeto, já que senão pode acabar sendo barrado por alguns trechos mais sensíveis por conta do JWT.
