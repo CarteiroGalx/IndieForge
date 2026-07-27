@@ -3,13 +3,17 @@ import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // TODO: implementar lógica de autenticação
-    console.log('login submit:', { email, password })
+    setLoading(true)
+    console.log('login submit:', { username, password })
+    const response = await axios.post('http://localhost:5259/api/auth/login', { username, password })
+    localStorage.setItem('token', response.data.message)
+    console.log(localStorage.getItem('token'))
+    setLoading(false)
   }
 
   return (
@@ -26,16 +30,16 @@ export default function Login() {
 
           <form onSubmit={handleLogin}>
             <div className="mb-3">
-              <label htmlFor="email" className="form-label text-white">
-                E-mail
+              <label htmlFor="username" className="form-label text-white">
+                Nome de Usuário
               </label>
               <input
-                type="email"
-                id="email"
+                type="text"
+                id="username"
                 className="form-control bg-dark text-white border-secondary"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="Digite seu e-mail"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="Digite seu nome de usuário"
                 required
               />
             </div>
