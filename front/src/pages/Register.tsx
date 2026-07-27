@@ -1,28 +1,30 @@
 import React, { useState } from 'react'
 import logo from '../assets/logo.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-export default function Login() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export default function Register() {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
-  const handleLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setLoading(true)
-    setError(null)
-    console.log('login submit:', { username, password })
-    try {
-      const response = await axios.post('http://localhost:5259/api/auth/login', { username, password })
-      localStorage.setItem('token', response.data.message)
-      console.log(localStorage.getItem('token'))
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Erro ao fazer login. Tente novamente.')
+    const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setLoading(true)
+        setError(null)
+        console.log('register submit:', { username, password, email })
+        try {
+            const response = await axios.post('http://localhost:5259/api/auth/register', { username, password, email })
+            navigate('/')
+            console.log(response.data)
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Erro ao fazer registro. Tente novamente.')
+        }
     }
-    setLoading(false)
-  }
+
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100" style={{ backgroundColor: '#0a0a0a' }}>
@@ -40,7 +42,22 @@ export default function Login() {
             </h2>
             <p className="text-white-50">Onde sonhos ganham vida</p>
           </div>
-          <form onSubmit={handleLogin}>
+          <div className="mb-4">
+              <label htmlFor="email" className="form-label text-white">
+                E-mail
+              </label>
+              <input
+                type="email"
+                id="email"
+                className="form-control bg-dark text-white border-secondary"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Digite seu e-mail"
+                required
+              />
+            </div>
+
+          <form onSubmit={handleRegister}>
             <div className="mb-3">
               <label htmlFor="username" className="form-label text-white">
                 Nome de Usuário
@@ -81,7 +98,7 @@ export default function Login() {
             </div>
 
             <div className="text-center text-white-50 mb-0">
-              <small>Ainda não tem conta? <Link to="/register">Clique aqui</Link></small>
+              <small>Já tem uma conta? <Link to="/">Clique aqui</Link></small>
             </div>
           </form>
         </div>
