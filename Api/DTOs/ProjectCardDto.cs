@@ -6,7 +6,7 @@ using IndieForge.Models;
 
 namespace IndieForge.DTOs
 {
-    public class ProjectCardDto()
+    public class ProjectCardDto
     {
         public string Nome { get; set; }
         public string Descricao { get; set; }
