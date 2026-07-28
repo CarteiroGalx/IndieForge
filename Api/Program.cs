@@ -547,10 +547,7 @@ namespace IndieForge
                 var metaFoiAtingida =
                     arrecadadoAntes < projeto.MetaFinanceira &&
                     projeto.TotalArrecadado >= projeto.MetaFinanceira;
-                if (metaFoiAtingida)
-                {
-                    projeto.Status = Status.EncerradoPorMeta;
-                }
+
                 await _context.SaveChangesAsync();
                 if (metaFoiAtingida)
                 {

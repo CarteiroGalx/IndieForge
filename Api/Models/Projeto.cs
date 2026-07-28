@@ -8,7 +8,6 @@ namespace IndieForge.Models
         Ativo,
         Oculto,
         Cancelado,
-        EncerradoPorMeta,
         EncerradoPeloCriador
     }
 
