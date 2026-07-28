@@ -4,6 +4,7 @@ using IndieForge.DTOs;
 using IndieForge.Models;
 using IndieForge.Models.Seeders;
 using IndieForge.Services;
+using IndieForge.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -91,7 +92,7 @@ namespace IndieForge
             builder.Services.AddScoped<ContributionService>();
             builder.Services.AddScoped<ProjectService>();
             builder.Services.AddScoped<AccountService>();
-            builder.Services.AddScoped<IValidator<LoginDto>, LoginDtoValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             var app = builder.Build();
 
@@ -165,22 +166,26 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            auth.MapPost("/register", async (AppDbContext _context, RegisterDto registerDto, AuthService authService) =>
+            auth.MapPost("/register", async (AppDbContext _context, IValidator<RegisterDto> validation, RegisterDto registerDto, AuthService authService) =>
             {
+                var validationResult = await validation.ValidateAsync(registerDto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == registerDto.UserName);
 
                 if (existingUser != null)
-                    throw new InvalidOperationException("Nome de usuário já existe");
+                    return Results.Conflict("Nome de usuário já existe");
 
                 var existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerDto.Email);
 
                 if (existingEmail != null)
-                    throw new InvalidOperationException("Email ja cadastrado");
+                    return Results.Conflict("Email ja cadastrado");
 
                 await authService.Registrar(registerDto);
                 var token = await authService.GerarTokenConfirmacaoEmail(registerDto.Email);
 
-                return new { Token = token, Message = "Usuário registrado com sucesso", Info = "Utilize este token simulado para confirmar seu email" };
+                return Results.Ok(new { Token = token, Message = "Usuário registrado com sucesso", Info = "Utilize este token simulado para confirmar seu email" });
             });
 
             me.MapGet("/", async (AppDbContext _context, ClaimsPrincipal acess) =>
@@ -232,8 +237,12 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            me.MapPatch("projects/edit-project/{id}", async (Guid id, AppDbContext _context, EditProjectDto dto, ClaimsPrincipal acess) =>
+            me.MapPatch("projects/edit-project/{id}", async (Guid id, AppDbContext _context, IValidator<EditProjectDto> validation, EditProjectDto dto, ClaimsPrincipal acess) =>
             {
+                var validationResult = await validation.ValidateAsync(dto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
@@ -359,8 +368,12 @@ namespace IndieForge
                 return contributions;
             });
 
-            projects.MapPost("/", async (AppDbContext _context, ClaimsPrincipal user, CreateProjectDto dto) =>
+            projects.MapPost("/", async (AppDbContext _context, IValidator<CreateProjectDto> validation, ClaimsPrincipal user, CreateProjectDto dto) =>
             {
+                var validationResult = await validation.ValidateAsync(dto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var idCriador))
                     return Results.BadRequest();
@@ -380,8 +393,12 @@ namespace IndieForge
                 return Results.Created($"/api/projects/{project.Id}", new { project.Id, project.Nome, project.Descricao, project.MetaFinanceira, project.Status });
             });
 
-            me.MapPatch("/change-password", async (AppDbContext _context, ClaimsPrincipal acess, ChangePasswordDto dto) =>
+            me.MapPost("/change-password", async (AppDbContext _context, IValidator<ChangePasswordDto> validation, ClaimsPrincipal acess, ChangePasswordDto dto) =>
             {
+                var validationResult = await validation.ValidateAsync(dto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
@@ -488,8 +505,12 @@ namespace IndieForge
                 return Results.Ok(response);
             });
 
-            me.MapPost("/alterar-meta", async (AppDbContext _context, ChangeMetaFinanceiraDto dto, ClaimsPrincipal acess) =>
+            me.MapPost("/alterar-meta", async (AppDbContext _context, IValidator<ChangeMetaFinanceiraDto> validation, ChangeMetaFinanceiraDto dto, ClaimsPrincipal acess) =>
             {
+                var validationResult = await validation.ValidateAsync(dto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var userIdFromToken = acess.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId)) return Results.Unauthorized();
 
@@ -521,8 +542,12 @@ namespace IndieForge
                 return Results.Ok("Projeto cancelado.");
             });
 
-            projects.MapPost("/contribution", async (AppDbContext _context, CreateContributionDto dto, ClaimsPrincipal user) =>
+            projects.MapPost("/contribution", async (AppDbContext _context, IValidator<CreateContributionDto> validation, CreateContributionDto dto, ClaimsPrincipal user) =>
             {
+                var validationResult = await validation.ValidateAsync(dto);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
+
                 var userIdFromToken = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
