@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 export default function Home() {
     const [projects, setProjects] = useState<Project[]>([])
+    const [userName, setUserName] = useState<string | null>(null)
 
     interface Project {
         id: string
@@ -23,6 +24,22 @@ export default function Home() {
             .catch(error => {
                 console.error('Error fetching projects:', error);
             });
+    }, []);
+
+    useEffect(() => {
+        axios.get('http://localhost:5259/api/check-auth', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        }).then(response => {
+            console.log('Auth check response:', response.data);
+            console.log(localStorage.getItem('token'));
+            setUserName(response.data.userName);
+        }).catch(error => {
+            console.error('Error checking auth:', error);
+            setUserName(null);
+            localStorage.removeItem('token');
+        })
     }, []);
 
     return (
