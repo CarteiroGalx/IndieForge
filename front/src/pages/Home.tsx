@@ -54,6 +54,14 @@ export default function Home() {
                     <p>Criador: {project.criadorNome}</p>
                 </div>
             ))}
+            </div>
+            <div className="bg-dark text-white p-3">
+                {userName ? (
+                    <p>Bem-vindo, {userName}!</p>
+                ) : (
+                    <p>Você não está logado.</p>
+                )}
+            </div>
         </div>
     )
 }
