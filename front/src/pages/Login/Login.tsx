@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logo from '../assets/logo.png'
+import logo from '../../assets/logo.png'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -20,6 +20,7 @@ export default function Login() {
       localStorage.setItem('token', response.data.message)
       console.log(localStorage.getItem('token'))
       navigate('/home')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if(err.response?.status === 401) setError(err.response?.data?.message || 'Credenciais inválidas')
 

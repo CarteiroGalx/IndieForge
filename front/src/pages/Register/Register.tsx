@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logo from '../assets/logo.png'
+import logo from '../../assets/logo.png'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -20,6 +20,7 @@ export default function Register() {
             const response = await axios.post('http://localhost:5259/api/auth/register', { username, password, email })
             navigate('/')
             console.log(response.data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erro ao fazer registro. Tente novamente.')
         }
