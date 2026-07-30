@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import logo from '../assets/logo.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 export default function Login() {
@@ -8,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const handleLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -18,6 +19,7 @@ export default function Login() {
       const response = await axios.post('http://localhost:5259/api/auth/login', { username, password })
       localStorage.setItem('token', response.data.message)
       console.log(localStorage.getItem('token'))
+      navigate('/home')
     } catch (err: any) {
       if(err.response?.status === 401) setError(err.response?.data?.message || 'Credenciais inválidas')
 
