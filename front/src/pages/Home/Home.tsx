@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import * as S from '../Home/Home.styles'
 
 interface Project {
     id: string
@@ -84,10 +85,9 @@ export default function Home() {
     }
 
     return (
-        <main className="min-vh-100 text-white" style={{ backgroundColor: '#070707' }}>
-            <section className="border-bottom" style={{ borderColor: '#242424' }}>
-                <div className="container py-2">
-                    <header className="col-12 py-1">
+        <S.Main className="min-vh-100 text-white">
+            <header className="border-bottom">
+                    <div className="col-12 py-2 container">
                         <div className="d-flex align-items-center justify-content-between">
                             <div className="row g-2 col-9">
                                 <form onSubmit={getProjectsByName}>
@@ -117,9 +117,8 @@ export default function Home() {
                                     </div>
                                 )}
                             </div>
-                    </header>
-                </div>
-            </section>
+                    </div>
+            </header>
             <section className="container py-5">
                 <div className="d-flex align-items-center justify-content-between mb-4">
                     <h2 className="h4 fw-semibold mb-0">Todos os projetos</h2>
@@ -197,6 +196,6 @@ export default function Home() {
                     </div>
                 )}
             </section>
-        </main>
+        </S.Main>
     )
 }
