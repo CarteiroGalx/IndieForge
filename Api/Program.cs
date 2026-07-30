@@ -353,6 +353,7 @@ namespace IndieForge
                     Nome = x.p.Nome,
                     Descricao = x.p.Descricao,
                     Meta = x.p.MetaFinanceira,
+                    Percentage = x.p.Percentage,
                     Arrecadado = x.Arrecadado,
                     Status = x.p.Status,
                     DataCriacao = x.p.DataCriacao,

@@ -8,6 +8,7 @@ interface Project {
     descricao: string
     meta: number
     arrecadado: number
+    percentage: number
     dataCriacao: string
     criadorNome: string
 }
@@ -64,11 +65,6 @@ export default function Home() {
             style: 'currency',
             currency: 'BRL'
         }).format(value)
-    }
-
-    const getProgress = (project: Project) => {
-        if (!project.meta) return 0
-        return Math.min(Math.round((project.arrecadado / project.meta) * 100), 100)
     }
 
     const getProjectsByName = async (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -145,7 +141,7 @@ export default function Home() {
                 ) : (
                     <div className="row g-4">
                         {projects.map(project => {
-                            const progress = getProgress(project)
+                            project.percentage = Math.trunc(project.percentage * 100) / 100;
 
                             return (
                                 <div className="col-12 col-md-6 col-xl-4" key={project.id}>
@@ -160,7 +156,7 @@ export default function Home() {
                                                     <p className="small text-warning mb-0">por {project.criadorNome}</p>
                                                 </div>
                                                 <span className="badge rounded-pill text-dark" style={{ backgroundColor: '#ffb000' }}>
-                                                    {progress}%
+                                                    {project.percentage}%
                                                 </span>
                                             </div>
 
@@ -171,8 +167,8 @@ export default function Home() {
                                                     <div
                                                         className="progress-bar"
                                                         role="progressbar"
-                                                        style={{ width: `${progress}%`, backgroundColor: '#ff8a00' }}
-                                                        aria-valuenow={progress}
+                                                        style={{ width: `${project.percentage}%`, backgroundColor: '#ff8a00' }}
+                                                        aria-valuenow={project.percentage}
                                                         aria-valuemin={0}
                                                         aria-valuemax={100}
                                                     />
