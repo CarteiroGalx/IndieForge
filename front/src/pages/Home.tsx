@@ -30,6 +30,17 @@ export default function Home() {
             })
     }, [])
 
+    
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+  }
+
     useEffect(() => {
         axios.get('http://localhost:5259/api/check-auth', {
             headers: {
@@ -61,33 +72,40 @@ export default function Home() {
     return (
         <main className="min-vh-100 text-white" style={{ backgroundColor: '#070707' }}>
             <section className="border-bottom" style={{ borderColor: '#242424' }}>
-                <div className="container py-4">
-                    <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-                        <div>
-                            <span className="badge rounded-pill text-dark mb-3" style={{ backgroundColor: '#ffc107' }}>
-                                IndieForge
-                            </span>
-                            <h1 className="display-6 fw-bold mb-2" style={{ color: '#ff8a00' }}>
-                                Projetos em destaque
-                            </h1>
-                            <p className="text-white-50 mb-0">
-                                Conheça os projetos independentes que estão buscando apoio.
-                            </p>
-                        </div>
-
-                        <div className="px-3 py-2 rounded-2 border" style={{ borderColor: '#2f2f2f', backgroundColor: '#111111' }}>
-                            {userName ? (
-                                <span className="small text-white-50">
-                                    Bem-vindo, <strong className="text-warning">{userName}</strong>
-                                </span>
-                            ) : (
-                                <span className="small text-white-50">Você não está logado.</span>
-                            )}
-                        </div>
-                    </div>
+                <div className="container py-2">
+                    <header className="col-12 py-1">
+                        <div className="d-flex align-items-center justify-content-between">
+                            <div className="row g-2 col-9">
+                                <form onSubmit={getProjectsByName}>
+                                    <input type='text' placeholder='Pesquisar' value={projectNameSearch} onChange={(e) => setProjecNameSearch(e.target.value)}id="search-input" className="form-control bg-dark border-0 text-white"></input>
+                                </form>
+                            </div>
+                                {userName ? (
+                                    <Link to="/profile" className="text-decoration-none border border-0 col-auto">
+                                                <div
+                                                className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                                style={{
+                                                    width: '50px',
+                                                    height: '50px',
+                                                    backgroundColor: '#ff8a00',
+                                                    color: '#070707',
+                                                    fontSize: '1.25rem',
+                                                    border: '2px solid #ffc107',
+                                                }}
+                                                >
+                                                {getInitials(userName)}
+                                            </div>
+                                    </Link>
+                                ) : (
+                                    <div className="d-flex gap-2 col-auto">
+                                        <button className="btn btn-warning"><Link className="text-white text-decoration-none" to="/">Entrar</Link></button>
+                                        <button className="btn btn-outline-warning"><Link className="text-white text-decoration-none" to="/register">Cadastrar</Link></button>
+                                    </div>
+                                )}
+                            </div>
+                    </header>
                 </div>
             </section>
-
             <section className="container py-5">
                 <div className="d-flex align-items-center justify-content-between mb-4">
                     <h2 className="h4 fw-semibold mb-0">Todos os projetos</h2>
