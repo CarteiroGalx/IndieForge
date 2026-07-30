@@ -15,6 +15,7 @@ interface Project {
 export default function Home() {
     const [projects, setProjects] = useState<Project[]>([])
     const [userName, setUserName] = useState<string | null>(null)
+    const [projectNameSearch, setProjecNameSearch] = useState('')
     const [loadingProjects, setLoadingProjects] = useState(true)
 
     useEffect(() => {
@@ -68,6 +69,22 @@ export default function Home() {
     const getProgress = (project: Project) => {
         if (!project.meta) return 0
         return Math.min(Math.round((project.arrecadado / project.meta) * 100), 100)
+    }
+
+    const getProjectsByName = async (event: React.SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setLoadingProjects(true)
+        axios.get('http://localhost:5259/api/projects?' + 'name=' + projectNameSearch)
+        .then(response => {
+            setProjects(response.data)
+            console.log(response.data)
+        })
+        .catch(err => {
+            console.log("Deu errado! Erro: " + err)
+        })
+        .finally(() => {
+            setLoadingProjects(false)
+        })
     }
 
     return (
