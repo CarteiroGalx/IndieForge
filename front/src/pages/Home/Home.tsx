@@ -151,8 +151,10 @@ export default function Home() {
             <p className="text-white-50 mb-0">Carregando projetos...</p>
           </div>
         ) : projects.length === 0 ? (
-          <div id="no-projects-board"
-            className="text-center py-5 rounded-2 border">
+          <div
+            id="no-projects-board"
+            className="text-center py-5 rounded-2 border"
+          >
             <h4 className="text-warning mb-2">Nenhum projeto encontrado</h4>
             <p className="text-white-50 mb-0">
               Novos projetos aparecerão aqui quando forem cadastrados.
@@ -169,69 +171,66 @@ export default function Home() {
                     to={`/projects/${project.id}`}
                     className="text-decoration-none d-block h-100"
                   >
-                  <article
-                    className="card h-100 shadow-sm border-0">
-                    <div className="card-body p-4 d-flex flex-column">
-                      <div className="d-flex align-items-start justify-content-between gap-3 mb-3 card-fast-info">
-                        <div>
-                          <h3 className="h5 fw-bold mb-1">{project.nome}</h3>
-                          <p className="small text-warning mb-0">
-                            por {project.criadorNome}
-                          </p>
-                        </div>
-                        <span
-                          className="badge rounded-pill text-dark">
-                          {project.percentage}%
-                        </span>
-                      </div>
-
-                      <p className="text-white-50 flex-grow-1 mb-4">
-                        {project.descricao}
-                      </p>
-
-                      <div className="mb-3">
-                        <div
-                          className="progress bg-dark"
-                          style={{ height: "8px" }}
-                        >
-                          <div
-                            className="progress-bar"
-                            role="progressbar"
-                            style={{
-                              width: `${project.percentage}%`,
-                            }}
-                            aria-valuenow={project.percentage}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="row g-3 small">
-                        <div className="col-6">
-                          <span className="d-block text-white-50">Meta</span>
-                          <strong>{formatCurrency(project.meta)}</strong>
-                        </div>
-                        <div className="col-6">
-                          <span className="d-block text-white-50">
-                            Arrecadado
+                    <article className="card h-100 shadow-sm border-0">
+                      <div className="card-body p-4 d-flex flex-column">
+                        <div className="d-flex align-items-start justify-content-between gap-3 mb-3 card-fast-info">
+                          <div>
+                            <h3 className="h5 fw-bold mb-1">{project.nome}</h3>
+                            <p className="small text-warning mb-0">
+                              por {project.criadorNome}
+                            </p>
+                          </div>
+                          <span className="badge rounded-pill text-dark">
+                            {project.percentage}%
                           </span>
-                          <strong style={{ color: "#ffc107" }}>
-                            {formatCurrency(project.arrecadado)}
-                          </strong>
                         </div>
-                        <div
-                          className="col-12 pt-2 border-top">
-                          <span className="text-white-50">Início: </span>
-                          <strong>
-                            {new Date(project.dataCriacao).toLocaleDateString(
-                              "pt-BR",
-                            )}
-                          </strong>
+
+                        <p className="text-white-50 flex-grow-1 mb-4">
+                          {project.descricao}
+                        </p>
+
+                        <div className="mb-3">
+                          <div
+                            className="progress bg-dark"
+                            style={{ height: "8px" }}
+                          >
+                            <div
+                              className="progress-bar"
+                              role="progressbar"
+                              style={{
+                                width: `${project.percentage}%`,
+                              }}
+                              aria-valuenow={project.percentage}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="row g-3 small">
+                          <div className="col-6">
+                            <span className="d-block text-white-50">Meta</span>
+                            <strong>{formatCurrency(project.meta)}</strong>
+                          </div>
+                          <div className="col-6">
+                            <span className="d-block text-white-50">
+                              Arrecadado
+                            </span>
+                            <strong style={{ color: "#ffc107" }}>
+                              {formatCurrency(project.arrecadado)}
+                            </strong>
+                          </div>
+                          <div className="col-12 pt-2 border-top">
+                            <span className="text-white-50">Início: </span>
+                            <strong>
+                              {new Date(project.dataCriacao).toLocaleDateString(
+                                "pt-BR",
+                              )}
+                            </strong>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </article>
+                    </article>
                   </Link>
                 </div>
               );
