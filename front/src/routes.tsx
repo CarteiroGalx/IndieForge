@@ -4,6 +4,7 @@ import Register from "./pages/Register/Register";
 import Home from "./pages/Home/Home";
 import MyProfile from "./pages/MyProfile/MyProfile";
 import ProjectDetails from "./pages/ProjectDetails/ProjectDetails";
+import AdminCenter from "./pages/Admin/AdminCenter"
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/projects/:projectId",
     element: <ProjectDetails />,
+  },
+  {
+    path: "/admin-center",
+    element: <AdminCenter />,
   }
 ]);
 

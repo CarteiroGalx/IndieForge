@@ -145,6 +145,11 @@ export default function Home() {
                       Logout
                     </Link>
                   </li>
+                {userInfo.userRole === "Admin" && (
+                    <li>
+                      <Link to="/admin-center" className="dropdown-item">Admin Center</Link>
+                    </li>
+                )}
               </ul>
             </div>
           ) : (
