@@ -127,13 +127,13 @@ namespace IndieForge
 
             app.MapGet("/api/check-auth", (ClaimsPrincipal user) =>
             {
-                var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var userName = user.FindFirst(ClaimTypes.Name)?.Value;
                 var userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+                var userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
 
                 return new
                 {
-                    UserId = userId,
+                    UserEmail = userEmail,
                     UserName = userName,
                     UserRole = userRole
                 };
