@@ -171,6 +171,7 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 - Axios
 - TypeScript
 - Bootstrap
+- Bootstrap Icons
 - LocalStorage
 
 </details>
