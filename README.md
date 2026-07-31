@@ -192,21 +192,98 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 <summary>Estruturação do projeto</summary>
 
 ```bash
-📦IndieForge
- ┣ 📂Context
- ┃ ┗ 📜AppDbContext.cs
- ┣ 📂DTOs
- ┣ 📂Migrations
- ┣ 📂Models
- ┃ ┣ 📜Contribuicao.cs
- ┃ ┣ 📜Projeto.cs
- ┃ ┗ 📜User.cs
- ┣ 📂Services
- ┃ ┣ 📜AuthService.cs
- ┃ ┗ 📜ProjectService.cs
- ┣ 📜IndieForge.slnx
- ┗ 📜Program.cs
- ```
+IndieForge
+├─ .agents
+├─ Api
+│  ├─ appsettings.json
+│  ├─ Context
+│  │  └─ AppDbContext.cs
+│  ├─ DTOs
+│  │  ├─ ChangeMetaFinanceiraDto.cs
+│  │  ├─ ChangePasswordDto.cs
+│  │  ├─ ContribuicaoDto.cs
+│  │  ├─ ContributionResponseDto.cs
+│  │  ├─ CreateContributionDto.cs
+│  │  ├─ CreateProjectDto.cs
+│  │  ├─ Dashboard
+│  │  │  ├─ KPIsDto.cs
+│  │  │  ├─ LogsAuditoryDto.cs
+│  │  │  └─ TopActivitesDto.cs
+│  │  ├─ EditProjectDto.cs
+│  │  ├─ LoginDto.cs
+│  │  ├─ LoginResponseDto.cs
+│  │  ├─ ProjectCardDto.cs
+│  │  ├─ ProjectDetailsDto.cs
+│  │  ├─ ProjectResumeDto.cs
+│  │  ├─ RegisterDto.cs
+│  │  └─ ResponseMeDto.cs
+│  ├─ IndieForge.csproj
+│  ├─ IndieForge.http
+│  ├─ IndieForge.slnx
+│  ├─ Migrations
+│  │  └─ Migrations...
+│  ├─ Models
+│  │  ├─ Contribuicao.cs
+│  │  ├─ EmailConfirmationToken.cs
+│  │  ├─ PasswordRecuperationToken.cs
+│  │  ├─ Projeto.cs
+│  │  ├─ Seeders
+│  │  │  └─ DatabaseSeeder.cs
+│  │  └─ User.cs
+│  ├─ Program.cs
+│  ├─ Properties
+│  │  └─ launchSettings.json
+│  ├─ Services
+│  │  ├─ AccountService.cs
+│  │  ├─ AdminService.cs
+│  │  ├─ AuthService.cs
+│  │  ├─ ContributionService.cs
+│  │  └─ ProjectService.cs
+│  └─ Validators
+│     ├─ ChangeMetaFinanceiraDtoValidator.cs
+│     ├─ ChangePasswordDtoValidator.cs
+│     ├─ ContribuicaoDtoValidator.cs
+│     ├─ CreateContributionDtoValidator.cs
+│     ├─ CreateProjectDtoValidator.cs
+│     ├─ EditProjectDtoValidator.cs
+│     ├─ LoginDtoValidator.cs
+│     └─ RegisterDtoValidator.cs
+├─ front
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  └─ logo.svg
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ App.tsx
+│  │  ├─ assets
+│  │  │  └─ logo.png
+│  │  ├─ main.tsx
+│  │  ├─ pages
+│  │  │  ├─ Admin
+│  │  │  │  └─ AdminCenter.tsx
+│  │  │  ├─ Home
+│  │  │  │  ├─ Home.styles.ts
+│  │  │  │  └─ Home.tsx
+│  │  │  ├─ Login
+│  │  │  │  └─ Login.tsx
+│  │  │  ├─ MyProfile
+│  │  │  │  └─ MyProfile.tsx
+│  │  │  ├─ ProjectDetails
+│  │  │  │  ├─ ProjectDetails.styles.ts
+│  │  │  │  └─ ProjectDetails.tsx
+│  │  │  └─ Register
+│  │  │     └─ Register.tsx
+│  │  └─ routes.tsx
+│  ├─ tsconfig.app.json
+│  ├─ tsconfig.json
+│  ├─ tsconfig.node.json
+│  └─ vite.config.ts
+├─ image.png
+└─ README.md
+```
+
 
 </details>
 
