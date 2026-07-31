@@ -130,21 +130,20 @@ A plataforma funciona como uma ponte entre criadores e jogadores, permitindo que
 
 ### Telas
 
-- 🟨 Tela de login/cadastro
-- 🟥 Tela de criação de projeto
-- 🟥 Tela de mais detalhes de projeto
-- 🟥 Tela de mais detalhes de um perfil da plataforma
-- 🟥 Tela do próprio perfil
+- 🟩 Home Page (apresentação de todos os projetos como visitante)
+- 🟩 Tela de login/cadastro
+- 🟩 Tela de mais detalhes de projeto
+- 🟩 Tela do próprio perfil
 - 🟥 Tela de Dashboard
-- 🟥 Home Page (apresentação de todos os projetos como visitante)
+- 🟥 Tela de criação de projeto
 
 ### Lógica e roteamento
 
-- 🟥 Login/Cadastro
-- 🟥 Definição das URLs
+- 🟩 Buscar por projetos
+- 🟩 Login/Cadastro
+- 🟨 Definição das URLs
 - 🟥 Criação de projeto
 - 🟥 Contribuição
-- 🟥 Buscar pro projetos
 
 </details>
 
