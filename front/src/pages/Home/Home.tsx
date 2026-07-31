@@ -138,16 +138,16 @@ export default function Home() {
                   <hr className="dropdown-divider bg-white"></hr>
                 </li>
                   <li>
-                    <Link to="/profile" className="dropdown-item">Ver perfil</Link>
+                    <Link to="/profile" className="dropdown-item"><i className="bi bi-file-person"></i> Ver perfil</Link>
                   </li>
                   <li>
                     <Link to="/" className="dropdown-item" onClick={Logout}>
-                      Logout
+                      <i className="bi bi-door-open-fill"></i> Logout
                     </Link>
                   </li>
                 {userInfo.userRole === "Admin" && (
                     <li>
-                      <Link to="/admin-center" className="dropdown-item">Admin Center</Link>
+                      <Link to="/admin-center" className="dropdown-item"><i className="bi bi-shield-shaded"></i> Admin Center</Link>
                     </li>
                 )}
               </ul>
