@@ -14,9 +14,15 @@ interface Project {
   criadorNome: string;
 }
 
+interface UserInfo {
+  userEmail: string;
+  userName: string;
+  userRole: string;
+}
+
 export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [projectNameSearch, setProjecNameSearch] = useState("");
   const [loadingProjects, setLoadingProjects] = useState(true);
 
@@ -24,7 +30,6 @@ export default function Home() {
     axios
       .get("http://localhost:5259/api/projects")
       .then((response) => {
-        console.log("Projects fetched:", response.data);
         setProjects(response.data);
       })
       .catch((error) => {
@@ -45,6 +50,10 @@ export default function Home() {
       .toUpperCase();
   };
 
+  const Logout = () => {
+    localStorage.removeItem("token");
+  };
+
   useEffect(() => {
     axios
       .get("http://localhost:5259/api/check-auth", {
@@ -53,13 +62,11 @@ export default function Home() {
         },
       })
       .then((response) => {
-        console.log("Auth check response:", response.data);
-        console.log(localStorage.getItem("token"));
-        setUserName(response.data.userName);
+        setUserInfo(response.data);
       })
       .catch((error) => {
         console.error("Error checking auth:", error);
-        setUserName(null);
+        setUserInfo(null);
         localStorage.removeItem("token");
       });
   }, []);
@@ -102,22 +109,44 @@ export default function Home() {
                 value={projectNameSearch}
                 onChange={(e) => setProjecNameSearch(e.target.value)}
                 id="search-input"
-                className="form-control bg-dark-subtle border-0 text-white"
+                className="form-control bg-dark-subtle border-0"
               ></input>
             </form>
           </div>
-          {userName ? (
-            <Link
-              to="/profile"
-              className="text-decoration-none border border-0 col-auto"
-            >
-              <div
+          {userInfo ? (
+            <div className="dropdown">
+              <button
+                className="btn rounded-circle btn-secondary"
                 id="icon-profile"
-                className="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-                {getInitials(userName)}
-              </div>
-            </Link>
+                <div>{getInitials(userInfo.userName)}</div>
+              </button>
+              <ul className="dropdown-menu dropdown-menu-dark">
+                <div className="px-3">
+                  <h6 className="mb-0">{userInfo.userName}</h6>
+                  <p className="text-warning max-width mb-0">
+                    {userInfo.userEmail}
+                  </p>
+                  <strong className="badge text-bg-warning user-select-none">
+                    {userInfo.userRole}
+                  </strong>
+                </div>
+                <li>
+                  <hr className="dropdown-divider bg-white"></hr>
+                </li>
+                  <li>
+                    <Link to="/profile" className="dropdown-item">Ver perfil</Link>
+                  </li>
+                  <li>
+                    <Link to="/" className="dropdown-item" onClick={Logout}>
+                      Logout
+                    </Link>
+                  </li>
+              </ul>
+            </div>
           ) : (
             <div className="d-flex gap-2 col-auto">
               <button className="btn btn-warning">

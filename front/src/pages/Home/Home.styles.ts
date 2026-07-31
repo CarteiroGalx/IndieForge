@@ -43,5 +43,19 @@ export const Div = styled.div`
     .progress-bar{
         background-color: #ff9c07
     }
-    
+
+    .dropdown button{
+        background-color: #ffc107;
+        border: 0px;
+    }
+
+    h6{
+        font-size: 20px
+    }
+    .dropdown p{
+        font-size: 12px
+    }
+    .dropdown-item:hover{
+        background-color: #ff9c07;
+    }
 `
