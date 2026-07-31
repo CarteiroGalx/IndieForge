@@ -127,7 +127,7 @@ export default function Home() {
               <ul className="dropdown-menu dropdown-menu-dark">
                 <div className="px-3">
                   <h6 className="mb-0">{userInfo.userName}</h6>
-                  <p className="text-warning max-width mb-0">
+                  <p className="text-white-50 max-width mb-0">
                     {userInfo.userEmail}
                   </p>
                   <strong className="badge text-bg-warning user-select-none">
