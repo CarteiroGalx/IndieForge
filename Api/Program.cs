@@ -350,6 +350,7 @@ namespace IndieForge
 
                 var projectsList = projected.Select(x => new ProjectCardDto
                 {
+                    Id = x.p.Id,
                     Nome = x.p.Nome,
                     Descricao = x.p.Descricao,
                     Meta = x.p.MetaFinanceira,

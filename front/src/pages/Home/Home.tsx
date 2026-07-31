@@ -165,6 +165,10 @@ export default function Home() {
 
               return (
                 <div className="col-12 col-md-6 col-xl-4" key={project.id}>
+                  <Link
+                    to={`/projects/${project.id}`}
+                    className="text-decoration-none d-block h-100"
+                  >
                   <article
                     className="card h-100 shadow-sm border-0">
                     <div className="card-body p-4 d-flex flex-column">
@@ -228,6 +232,7 @@ export default function Home() {
                       </div>
                     </div>
                   </article>
+                  </Link>
                 </div>
               );
             })}
