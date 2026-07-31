@@ -1,61 +1,70 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const Div = styled.div`
-    background-color: #070707;
+  background-color: #070707;
 
-    header{
-        background-color: pink;
-    }
+  header {
+    background-color: pink;
+  }
 
-    #icon-profile{
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
-        color: #ffc107;
-        background-color: #5f6163;
-        border: 2px solid #ffc107;
-    }
+  #icon-profile {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+    color: #ffc107;
+    background-color: #5f6163;
+    border: 2px solid #ffc107;
+  }
 
-    #icon-profile:hover{
-        cursor: pointer;
-        background-color: #ffc107;
-        color: black;
-    }
+  #icon-profile:hover {
+    cursor: pointer;
+    background-color: #ffc107;
+    color: black;
+  }
 
-    main{
-        padding-top: 90px;
-    }
+  main {
+    padding-top: 90px;
+  }
 
-    #no-projects-board{
-        border-color: #2f2f2f; 
-        background-color: #111111;
-    }
+  #no-projects-board {
+    border-color: #2f2f2f;
+    background-color: #111111;
+  }
 
-    article{
-        background-color: #121212;
-        color: white;
-    }
+  article {
+    background-color: #121212;
+    color: white;
+    transition: 0.2s ease;
+  }
 
-    .card-body .card-fast-info span{
-        background-color: #ffc107
-    }
+  article:hover {
+    border: 1px solid #ffc107;
+    box-shadow:
+      5px 2px 5px #ffc107b7,
+      -5px -4px 5px #ffbf0049;
+    transform: translateY(-4px);
+  }
 
-    .progress-bar{
-        background-color: #ff9c07
-    }
+  .card-body .card-fast-info span {
+    background-color: #ffc107;
+  }
 
-    .dropdown button{
-        background-color: #ffc107;
-        border: 0px;
-    }
+  .progress-bar {
+    background-color: #ff9c07;
+  }
 
-    h6{
-        font-size: 20px
-    }
-    .dropdown p{
-        font-size: 12px
-    }
-    .dropdown-item:hover{
-        background-color: #ff9c07;
-    }
-`
+  .dropdown button {
+    background-color: #ffc107;
+    border: 0px;
+  }
+
+  h6 {
+    font-size: 20px;
+  }
+  .dropdown p {
+    font-size: 12px;
+  }
+  .dropdown-item:hover {
+    background-color: #ff9c07;
+  }
+`;

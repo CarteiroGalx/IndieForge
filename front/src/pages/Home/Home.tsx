@@ -205,7 +205,7 @@ export default function Home() {
                     to={`/projects/${project.id}`}
                     className="text-decoration-none d-block h-100"
                   >
-                    <article className="card h-100 shadow-sm border-0">
+                    <article className="card h-100">
                       <div className="card-body p-4 d-flex flex-column">
                         <div className="d-flex align-items-start justify-content-between gap-3 mb-3 card-fast-info">
                           <div>
