@@ -7,7 +7,6 @@ namespace IndieForge.DTOs
 {
     public class CreateContributionDto
     {
-        public Guid ProjetoId { get; set; }
         public decimal Valor { get; set; }
     }
 }

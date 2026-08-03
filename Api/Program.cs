@@ -544,7 +544,7 @@ namespace IndieForge
                 return Results.Ok("Projeto cancelado.");
             });
 
-            projects.MapPost("/contribution", async (AppDbContext _context, IValidator<CreateContributionDto> validation, CreateContributionDto dto, ClaimsPrincipal user) =>
+            projects.MapPost("/{id}/contributions", async (AppDbContext _context, IValidator<CreateContributionDto> validation, CreateContributionDto dto, Guid id, ClaimsPrincipal user) =>
             {
                 var validationResult = await validation.ValidateAsync(dto);
                 if (!validationResult.IsValid)
@@ -554,7 +554,7 @@ namespace IndieForge
                 if (!Guid.TryParse(userIdFromToken, out var userId))
                     return Results.BadRequest();
 
-                var projeto = await _context.Projects.FindAsync(dto.ProjetoId);
+                var projeto = await _context.Projects.FindAsync(id);
                 if (projeto is null) return Results.NotFound("Projeto não encontrado");
 
                 if (projeto.Status != Status.Ativo) return Results.BadRequest("Este projeto não está mais disponível");
@@ -583,7 +583,7 @@ namespace IndieForge
                         Message = "Você foi quem finalizou a meta. Parabéns!"
                     });
                 }
-                return Results.Ok();
+                return Results.Ok(new { Message = "Contribuição realizada com sucesso!" });
             }).RequireAuthorization();
 
             dashboard.MapGet("/", async (AppDbContext context) =>
