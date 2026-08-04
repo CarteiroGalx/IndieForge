@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as S from "./ProjectDetails.styles";
 
 interface Contribution {
@@ -31,6 +32,11 @@ export default function ProjectDetails() {
   const { projectId } = useParams();
   const [project, setProject] = useState<ProjectDetailsData | null>(null);
   const [loadingProject, setLoadingProject] = useState(true);
+  const [contributionValue, setContributionValue] = useState<number>(0);
+  const navigate = useNavigate();
+
+  const [errorModal, setErrorModal] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -50,6 +56,20 @@ export default function ProjectDetails() {
         setLoadingProject(false);
       });
   }, [projectId]);
+  
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5259/api/check-auth", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        navigate("/");
+      });
+  });
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
