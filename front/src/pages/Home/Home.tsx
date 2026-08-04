@@ -65,7 +65,6 @@ export default function Home() {
         setUserInfo(response.data);
       })
       .catch((error) => {
-        console.error("Error checking auth:", error);
         setUserInfo(null);
         localStorage.removeItem("token");
       });
