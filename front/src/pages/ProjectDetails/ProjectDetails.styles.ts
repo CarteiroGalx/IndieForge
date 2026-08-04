@@ -5,6 +5,10 @@ export const Page = styled.div`
   background: #070707;
   color: #ffffff;
 
+  .modal{
+    background: rgba(0, 0, 0, 0.6);
+  }
+
   main {
     padding-bottom: 56px;
     padding-top: 32px;

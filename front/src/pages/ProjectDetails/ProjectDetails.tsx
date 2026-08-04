@@ -30,6 +30,7 @@ const statusLabels: Record<number, string> = {
 
 export default function ProjectDetails() {
   const { projectId } = useParams();
+  const [modalShow, setModalShow] = useState(false);
   const [project, setProject] = useState<ProjectDetailsData | null>(null);
   const [loadingProject, setLoadingProject] = useState(true);
   const [contributionValue, setContributionValue] = useState<number>(0);
@@ -38,11 +39,9 @@ export default function ProjectDetails() {
   const [errorModal, setErrorModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [sucessMessage, setSucessMessage] = useState("");
 
   useEffect(() => {
-    setLoadingProject(true);
-    setErrorMessage("");
-
     axios
       .get(`http://localhost:5259/api/projects/${projectId}`)
       .then((response) => {
@@ -78,6 +77,45 @@ export default function ProjectDetails() {
     }).format(value);
   };
 
+  const handleContribution = (event: React.SubmitEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (contributionValue <= 0) {
+      alert("Por favor, insira um valor válido para a contribuição.");
+      return;
+    }
+
+    axios
+      .post(
+        `http://localhost:5259/api/projects/${projectId}/contributions`,
+        { valor: contributionValue },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      )
+      .then((response) => {
+        setModalShow(false);
+        setSuccessModal(true);
+        setContributionValue(0);
+        setSucessMessage(response.data.message);
+        return axios.get(`http://localhost:5259/api/projects/${projectId}`);
+      })
+      .then((response) => {
+        setProject(response.data);
+        setSuccessModal(false);
+      })
+      .catch((err) => {
+        setModalShow(false);
+        setErrorMessage(
+          err.response?.data?.message ||
+            "Ocorreu um erro ao enviar a contribuição.",
+        );
+        setErrorModal(true);
+        console.error("Erro ao enviar contribuição:", err);
+      });
+  };
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("pt-BR");
   };
@@ -95,7 +133,7 @@ export default function ProjectDetails() {
     );
   }
 
-  if (errorMessage || !project) {
+  if (!project) {
     return (
       <S.Page>
         <main className="container">
@@ -103,7 +141,7 @@ export default function ProjectDetails() {
             Voltar
           </Link>
           <section className="empty-state">
-            <h1>Projeto nao encontrado</h1>
+            <h1>Projeto não encontrado</h1>
             <p>{errorMessage || "Nao encontramos dados para este projeto."}</p>
           </section>
         </main>
@@ -115,6 +153,66 @@ export default function ProjectDetails() {
 
   return (
     <S.Page>
+      {modalShow && (
+        <div className="modal" tabIndex={-1} style={{ display: "block" }}>
+          <div className="modal-dialog-centered modal-dialog">
+            <div className="modal-content border border-2 border-warning bg-dark text-white">
+              <div className="modal-body">
+                <h3>Insira valor da contribuição</h3>
+                <input
+                  type="number"
+                  value={contributionValue}
+                  onChange={(e) => setContributionValue(Number(e.target.value))}
+                  className="form-control bg-black border-warning text-white"
+                />
+              </div>
+              <div className="modal-footer border-0">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                  onClick={() => setModalShow(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-warning"
+                  onClick={handleContribution}
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {(successModal || errorModal) && (
+        <div className="modal" tabIndex={-1} style={{ display: "block" }}>
+          <div className="modal-dialog-centered modal-dialog">
+            <div
+              className={`modal-content border border-2 ${successModal ? "border-success" : "border-danger"} bg-dark text-white`}
+            >
+              <div className="modal-body">
+                <h3>{successModal ? "Sucesso!" : "Erro!"}</h3>
+                <p>{successModal ? sucessMessage : errorMessage}</p>
+              </div>
+              <div className="modal-footer border-0">
+                <button
+                  type="button"
+                  className={`btn ${successModal ? "btn-success" : "btn-danger"}`}
+                  onClick={() => {
+                    setSuccessModal(false);
+                    setErrorModal(false);
+                  }}
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="container">
         <Link to="/home" className="back-link">
           Voltar
@@ -135,7 +233,12 @@ export default function ProjectDetails() {
               <strong>{formatCurrency(project.totalArrecadado)}</strong>
               <small>de {formatCurrency(project.metaFinanceira)}</small>
             </aside>
-            <button className="col-12 btn btn-warning mt-1"><strong>Contribuir</strong></button> 
+            <button
+              className="col-12 btn btn-warning mt-1"
+              onClick={() => setModalShow(true)}
+            >
+              <strong>Contribuir</strong>
+            </button>
           </div>
         </section>
 
@@ -145,10 +248,7 @@ export default function ProjectDetails() {
             <strong>{project.porcentagem.toFixed(2)}%</strong>
           </div>
           <div className="progress-track">
-            <div
-              className="progress-fill"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="progress-fill" style={{ width: `${progress}%` }} />
           </div>
         </section>
 
