@@ -6,6 +6,7 @@ namespace IndieForge.Models
     public enum Status
     {
         Ativo,
+        Finalizado,
         Oculto,
         Cancelado,
         EncerradoPeloCriador
