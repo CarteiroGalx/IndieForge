@@ -16,14 +16,18 @@ export default function Register() {
         setLoading(true)
         setError(null)
         console.log('register submit:', { username, password, email })
-        try {
-            const response = await axios.post('http://localhost:5259/api/auth/register', { username, password, email })
-            navigate('/')
+
+        axios.post('http://localhost:5259/api/auth/register', { username, password, email })
+        .then((response) => {
             console.log(response.data)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (err: any) {
+            navigate('/')
+        })
+        .catch((err) => {
             setError(err.response?.data?.message || 'Erro ao fazer registro. Tente novamente.')
-        }
+        })
+        .finally(() => {
+            setLoading(false)
+        })
     }
 
 

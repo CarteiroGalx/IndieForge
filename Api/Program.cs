@@ -175,12 +175,12 @@ namespace IndieForge
                 var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Nome == registerDto.UserName);
 
                 if (existingUser != null)
-                    return Results.Conflict("Nome de usuário já existe");
+                    return Results.Conflict(new { Message = "Nome de usuário já existe" });
 
                 var existingEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == registerDto.Email);
 
                 if (existingEmail != null)
-                    return Results.Conflict("Email ja cadastrado");
+                    return Results.Conflict(new { Message = "Email já cadastrado" });
 
                 await authService.Registrar(registerDto);
                 var token = await authService.GerarTokenConfirmacaoEmail(registerDto.Email);
