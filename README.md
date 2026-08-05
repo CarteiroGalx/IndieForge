@@ -289,11 +289,14 @@ IndieForge
 ## Como testar o projeto
 
 - Primeiro de tudo, use `git clone <URL do projeto>` em um diretório desejável e certifique-se que tenha o **.NET 8** instalado em sua máquina.
-- Depois, navegue até a pasta raiz do projeto
-- Você também vai precisar de uma **Connection String**, e que deve ser de um banco de dados que utilize PostgreeSQL.
+- Você também vai precisar de uma **Connection String**, e que deve ser de um banco de dados que utilize PostgreSQL.
 - Após pegar sua Connectrion Striing, vá até o arquivo `appsettings.json` e insira a string no local indicado.
-- Digite `dotnet run` no terminal que aponta para a raiz do projeto e aguarde a aplicação inicializar.
-- Após isso, poderá navegar até `http://localhost:5259/swagger/index.html` e testar a API através do Swagger.
+- Agora terá de criar 2 terminals, um para o front-end e o outro para o back-end.
+- No terminal do front-end, certifique-se que o terminal esteja na pasta `/front` e então inicie a aplicação com `npm run dev`.
+- No terminal do back-end é quase a mesma coisa. O terminal deve estar na pasta `/Api` e iniciar a API com `dotnet run`.
+- Após isso, poderá navegar até `http://localhost:5173/home`.
+
+> ### Em breve haverá Docker pra facilitar essa parte chata!
 
 ### Registros Seeds
 
@@ -301,17 +304,15 @@ O projeto também tem Seeds para que outras pessoas possam testar o funcionament
 
 Para acessar e testar a API, é super simples. Na tela de Login, você pode escolher um destes nomes de usuários fictícios abaixo:
 
-- Admin
-- João Silva
-- Mariana Costa
-- Lucas Pereira
-- Ana Oliveira
-- Pedro Santos
-- Carla Mendes
-- Rafael Gomes
-- Beatriz Almeida
-- Thiago Ribeiro
+- Admin **- User@1**
+- João Silva **- User@2**
+- Mariana Costa **- User@3**
+- Lucas Pereira **- User@4**
+- Ana Oliveira **- User@5**
+- Pedro Santos **- User@6**
+- Carla Mendes **- User@7**
+- Rafael Gomes **- User@8**
+- Beatriz Almeida **- User@9**
+- Thiago Ribeiro **- User@10**
 
-A senha de cada um deles é simplesmente **User@x**, aonde **x** é sua posição na lista acima, de cima pra baixo. Por exemplo, o do **Admin** seria **User@1**.
-
-É bom começar pelo Admin, já que esta conta possui privilégios de administrador que o permite explorar 100% do projeto, já que senão pode acabar sendo barrado por alguns trechos mais sensíveis por conta do JWT.
+A senha de cada um deles está descrita ao lado do nome.
