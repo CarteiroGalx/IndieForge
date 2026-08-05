@@ -125,6 +125,28 @@ namespace IndieForge.Models.Seeders
                 p.TotalArrecadado += c.Valor;
             }
 
+            // Define a data de conclusão do projeto quando a meta financeira for atingida
+            foreach (var project in projects)
+            {
+                var projectContributions = contribs
+                    .Where(c => c.ProjectId == project.Id)
+                    .OrderBy(c => c.DataCriacao)
+                    .ToList();
+
+                decimal accumulated = 0m;
+                foreach (var contribution in projectContributions)
+                {
+                    accumulated += contribution.Valor;
+                    if (accumulated >= project.MetaFinanceira)
+                    {
+                        project.DataConclusao = contribution.DataCriacao < project.DataCriacao
+                            ? project.DataCriacao
+                            : contribution.DataCriacao;
+                        break;
+                    }
+                }
+            }
+
             // Adiciona tudo ao contexto e salva uma única vez
             context.Users.AddRange(users);
             context.Projects.AddRange(projects);
